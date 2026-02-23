@@ -103,6 +103,7 @@ urlpatterns = [
     path('paciente/historico/evolucao/<int:paciente_id>/', pacientes_views.visualizar_evolucoes_paciente, name='visualizar_evolucoes_paciente'),
     path('paciente/historico/avaliacao/<int:paciente_id>/', pacientes_views.visualizar_avaliacoes_paciente, name='visualizar_avaliacoes_paciente'),
     path('paciente/historico/agendamentos/<int:paciente_id>/', pacientes_views.visualizar_agendamentos_paciente, name='visualizar_agendamentos_paciente'),
+    path('paciente/historico/formularios-respondidos/<int:paciente_id>/', pacientes_views.visualizar_formularios_respondidos_paciente, name='visualizar_formularios_respondidos_paciente'),
 
     #path('paciente/perfil/<int:paciente_id>/todos_agendamentos', pacientes_views.todos_agendamentos, name='todos_agendamentos_paciente'),
     path("api/buscar-pacientes/", pacientes_views.buscar_pacientes, name="buscar_pacientes"),

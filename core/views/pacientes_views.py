@@ -1233,3 +1233,42 @@ def visualizar_agendamentos_paciente(request, paciente_id):
         'page_obj': page_obj,
     }
     return render(request, 'core/pacientes/historico/visualizar_agendamentos.html', context)
+def visualizar_formularios_respondidos_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+
+    query = request.GET.get('q', '').strip()
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    respostas = (
+        RespostaFormulario.objects
+        .filter(paciente_id=paciente_id)
+        .select_related('formulario')
+        .order_by('-enviado_em')
+    )
+    print(respostas)
+    if query:
+        respostas = respostas.filter(
+            formulario__titulo__icontains=query
+        )
+
+    if data_inicio:
+        respostas = respostas.filter(enviado_em__date__gte=data_inicio)
+
+    if data_fim:
+        respostas = respostas.filter(enviado_em__date__lte=data_fim)
+
+    paginator = Paginator(respostas, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'paciente': paciente,
+        'page_obj': page_obj,
+    }
+
+    return render(
+        request,
+        'core/pacientes/historico/visualizar_formularios_respondidos.html',
+        context
+    )
