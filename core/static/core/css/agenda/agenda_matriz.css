@@ -1192,6 +1192,7 @@ td {
 /* ===== FOOTER - FIXO NA BASE DO MODAL ===== */
 .modal-footer-sticky {
     flex-shrink: 0;
+    /* Não encolhe */
     background: var(--branco);
     border-top: 2px solid var(--roxoPrincipal);
     padding: 16px 24px;
