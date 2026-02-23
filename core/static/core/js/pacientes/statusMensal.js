@@ -284,7 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  if (aplicarBtn) {
   aplicarBtn.addEventListener('click', aplicarFiltro);
+}
 
   // (Opcional) Atualizar automaticamente ao trocar mês/ano:
   filtroMes.addEventListener('change', aplicarFiltro);

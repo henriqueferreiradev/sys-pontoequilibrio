@@ -1,0 +1,185 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Histórico de Status - {{ paciente.nome }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/tema.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/pacientes/visualizar_historico.css' %}">
+{% endblock %}
+
+{% block topbar_title %}
+<span class="text">
+    <i class="fas fa-chart-line"></i>
+    Histórico de Status
+</span>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+
+    {% include "core/partials/filtros/filtro_historico_status.html" %}
+
+    <div class="content-list">
+        <div class="lista-prontuarios">
+
+            {% if page_obj %}
+                {% for historico in page_obj %}
+                    <div class="prontuario-card">
+
+                        <div class="prontuario-info">
+
+                            <!-- Título -->
+                            <div class="prontuario-titulo">
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ historico.mes|stringformat:"02d" }}/{{ historico.ano }}
+                            </div>
+                            <!-- Metadata -->
+                            <div class="prontuario-metadata">
+
+                                <div class="metadata-item">
+                                    <i class="fas fa-percentage"></i>
+                                    <span>
+                                        <strong>Percentual:</strong>
+                                        {{ historico.percentual }}%
+                                    </span>
+                                </div>
+
+                                <div class="metadata-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>
+                                        <strong>Frequência Sistema:</strong>
+                                        {{ historico.freq_sistema }}
+                                    </span>
+                                </div>
+
+                                <div class="metadata-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>
+                                        <strong>Frequência Programada:</strong>
+                                        {{ historico.freq_programada }}
+                                    </span>
+                                </div>
+
+                                <div class="metadata-item">
+                                    <i class="fas fa-gift"></i>
+                                    <span>
+                                        <strong>Benefício:</strong>
+                                        {% if historico.ganhou_beneficio %}
+                                            <span style="color: green; font-weight:600;">
+                                                ✔ Ganhou
+                                            </span>
+                                        {% else %}
+                                            <span style="color: red; font-weight:600;">
+                                                ✗ Não Ganhou
+                                            </span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <div class="metadata-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>
+                                        <strong>Registrado em:</strong>
+                                        {{ historico.data_registro|date:"d/m/Y H:i" }}
+                                    </span>
+                                </div>
+
+                            </div>
+                            </div>
+
+                        <!-- Ações -->
+                        <div class="prontuario-actions">
+                            {% if historico.status == "primeiro_mes" %}
+                                <span class="badge badge-primeiro_mes">1º Mês</span>
+
+                            {% elif historico.status == "premium" %}
+                                <span class="badge badge-premium">Premium</span>
+
+                            {% elif historico.status == "vip" %}
+                                <span class="badge badge-vip">VIP</span>
+
+                            {% elif historico.status == "plus" %}
+                                <span class="badge badge-plus">Plus</span>
+
+                            {% else %}
+                                <span class="badge badge-indefinido">Indefinido</span>
+                            {% endif %}
+                            <button 
+                                class="action-btn btn-benefits"
+                                type="button"
+                                onclick="openBenefits('{{ paciente.id }}')">
+                                <i class='bx bx-gift'></i> 
+                            </button>
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <div class="empty">
+                    <i class="fas fa-chart-line"
+                       style="font-size:1.6rem; color:var(--roxoPrincipal); margin-bottom:.5rem;"></i>
+                    <h3 style="color:var(--q-preto); margin-bottom:.4rem;">
+                        Nenhum histórico registrado
+                    </h3>
+                    <p>Esse paciente ainda não possui histórico de status mensal.</p>
+                </div>
+            {% endif %}
+
+        </div>
+
+        {% include "core/partials/_paginacao.html" %}
+        <div id="benefitsModal" class="modal-overlay hidden">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Benefícios do Paciente</h3>
+                <button class="btn-close" onclick="closeModal('benefitsModal')">
+                <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="benefit-item">
+                <div class="benefit-header">
+                    <div>
+                    <h4 class="benefit-name">Desconto de 20%</h4>
+                    <p class="benefit-date">Válido até 30/04/2023</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.875rem">
+                    Usar Desconto
+                    </button>
+                </div>
+                </div>
+                <div class="benefit-item">
+                <div class="benefit-header">
+                    <div>
+                    <h4 class="benefit-name">Sessão Extra</h4>
+                    <p class="benefit-date">Válido até 15/05/2023</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.875rem">
+                    Agendar Sessão
+                    </button>
+                </div>
+                </div>
+                <div class="benefit-item benefit-used">
+                <div class="benefit-header">
+                    <div>
+                    <h4 class="benefit-name">Massagem Relaxante</h4>
+                    <p class="benefit-date">Utilizado em 12/03/2023</p>
+                    </div>
+                    <span class="benefit-status"> Utilizado </span>
+                </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/js/base/abrirFiltro.js' %}"></script>
+<script src="{% static 'core/js/pacientes/statusMensal.js' %}"></script>
+{% endblock %}

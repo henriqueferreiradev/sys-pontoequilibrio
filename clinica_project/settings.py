@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.SessionExpiredMiddleware',
 ]
 
 ROOT_URLCONF = 'clinica_project.urls'
@@ -135,3 +136,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'notificacao.pontodeequilibrio@gmail.com'
 EMAIL_HOST_PASSWORD = 'eolv jlri eyvu imhz'
 DEFAULT_FROM_EMAIL = 'Ponto de Equilibrio <notificacao.pontodeequilibrio@gmail.com>'
+
+SESSION_COOKIE_AGE = 1800
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True

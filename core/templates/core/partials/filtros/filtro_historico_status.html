@@ -1,0 +1,97 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/partials/filtros/filtro_auditoria.css' %}">
+{% endblock %}
+
+<div class="filtro-universal">
+    <div class="filtro-header">
+        <h2><i class='bx bx-filter-alt'></i> Filtros</h2>
+        <div>
+            <button type="button" class="filtro-toggle">
+                <i class='bx bx-chevron-down'></i>
+            </button>
+        </div>
+    </div>
+
+    <form method="get">
+
+        <div class="filtro-body">
+            <!-- Status -->
+            <div class="filtro-campo">
+                <label for="filtro-status">Status</label>
+                <select name="status" id="filtro-status" class="filtro-select">
+                    <option value="">Todos</option>
+                    <option value="premium" {% if request.GET.status == "premium" %}selected{% endif %}>Premium</option>
+                    <option value="vip" {% if request.GET.status == "vip" %}selected{% endif %}>VIP</option>
+                    <option value="plus" {% if request.GET.status == "plus" %}selected{% endif %}>Plus</option>
+                    <option value="primeiro_mes" {% if request.GET.status == "primeiro_mes" %}selected{% endif %}>Primeiro mês</option>
+                    <option value="indefinido" {% if request.GET.status == "indefinido" %}selected{% endif %}>Indefinido</option>
+                </select>
+            </div>
+
+            <!-- Benefício -->
+            <div class="filtro-campo">
+                <label for="filtro-beneficio">Benefício</label>
+                <select name="ganhou_beneficio" id="filtro-beneficio" class="filtro-select">
+                    <option value="">Todos</option>
+                    <option value="1" {% if request.GET.ganhou_beneficio == "1" %}selected{% endif %}>Ganhou</option>
+                    <option value="0" {% if request.GET.ganhou_beneficio == "0" %}selected{% endif %}>Não Ganhou</option>
+                </select>
+            </div>
+
+            <!-- Percentual mínimo -->
+            <div class="filtro-campo">
+                <label for="filtro-percentual">Percentual mínimo</label>
+                <input
+                    type="number"
+                    name="percentual_min"
+                    min="0"
+                    max="100"
+                    value="{{ request.GET.percentual_min }}"
+                    id="filtro-percentual"
+                    class="filtro-input"
+                    placeholder="Ex: 60"
+                />
+            </div>
+
+            <!-- Data Início -->
+            <div class="filtro-campo">
+                <label for="filtro-data-inicio">Data Início</label>
+                <input
+                    type="date"
+                    name="data_inicio"
+                    value="{{ request.GET.data_inicio }}"
+                    id="filtro-data-inicio"
+                    class="filtro-input"
+                />
+            </div>
+
+            <!-- Data Fim -->
+            <div class="filtro-campo">
+                <label for="filtro-data-fim">Data Fim</label>
+                <input
+                    type="date"
+                    name="data_fim"
+                    value="{{ request.GET.data_fim }}"
+                    id="filtro-data-fim"
+                    class="filtro-input"
+                />
+            </div>
+
+        </div>
+
+        <div class="filtro-acoes">
+
+            <a href="" class="btn btn-secondary">
+                <i class='bx bx-reset'></i> Limpar
+            </a>
+
+            <button type="submit" name="filtrar" value="1" class="btn btn-primary">
+                <i class='bx bx-filter'></i> Aplicar Filtros
+            </button>
+
+        </div>
+
+    </form>
+</div>

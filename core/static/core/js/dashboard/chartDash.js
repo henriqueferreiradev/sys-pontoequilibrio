@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const ctx5 = document.getElementById('statusChart').getContext('2d');
 
         new Chart(ctx5, {
-            type: 'bar',
+            type: 'pie',
 
             data: statusAgendametosChart,
             options: {
@@ -208,23 +208,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: 'right',
                         labels: {
-                            padding: 5,
+                            padding: 5, // espaço entre os itens da legenda
                             boxWidth: 15,
                             color: 'white'
-                        }
-                    },
-                    datalabels: {
-                        color: 'white',
-                        anchor: 'center',
-                        align: 'center',
-                        font: {
-                            weight: 'normal'
-                        },
-                        formatter: function (value, context) {
-                            const label = context.chart.data.labels[context.dataIndex]
-                            return `${label} (${value})`;
                         }
                     }
                 },

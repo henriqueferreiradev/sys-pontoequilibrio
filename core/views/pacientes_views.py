@@ -1191,28 +1191,37 @@ def visualizar_agendamentos_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     
     query = request.GET.get('q', '').strip()
-    situacao = request.GET.get('situacao', '').strip()
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
+    especialidade_id = request.GET.get('especialidade_id')
+    status=request.GET.get('status')
 
     agendamentos = (
         Agendamento.objects
         .filter(paciente_id=paciente_id)
-        .select_related('profissional_1', 'paciente')
+        .select_related(
+        'paciente', 'profissional_1', 'profissional_1__especialidade', 'especialidade','pacote')
         .order_by('-data')
     )
     
     if query:
         agendamentos = agendamentos.filter(
-            Q(profissional__nome__icontains=query) | 
-            Q(profissional__sobrenome__icontains=query)
+            Q(profissional_1__nome__icontains=query) | 
+            Q(profissional_1__sobrenome__icontains=query) |
+            Q(profissional_2__nome__icontains=query) | 
+            Q(profissional_2__sobrenome__icontains=query) |
+            Q(pacote__codigo__icontains=query) 
         )
 
     # Filtro por período de datas
     if data_inicio:
-        agendamentos = agendamentos.filter(data_criacao__date__gte=data_inicio)
+        agendamentos = agendamentos.filter(data__gte=data_inicio)
     if data_fim:
-        agendamentos = agendamentos.filter(data_criacao__date__lte=data_fim)
+        agendamentos = agendamentos.filter(data__lte=data_fim)
+    if especialidade_id:
+        agendamentos = agendamentos.filter(especialidade_id=especialidade_id)
+    if status:
+        agendamentos = agendamentos.filter(status=status)
 
 
     paginator = Paginator(agendamentos, 13)
@@ -1226,13 +1235,17 @@ def visualizar_agendamentos_paciente(request, paciente_id):
     except EmptyPage:
         page_obj = paginator.get_page(paginator.num_pages)
 
+    especialidades = Especialidade.objects.filter(ativo=True)
     
     context = {
         'paciente': paciente,
         'agendamentos': agendamentos,
         'page_obj': page_obj,
+        'especialidades': especialidades,
     }
     return render(request, 'core/pacientes/historico/visualizar_agendamentos.html', context)
+
+
 def visualizar_formularios_respondidos_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
@@ -1270,5 +1283,75 @@ def visualizar_formularios_respondidos_paciente(request, paciente_id):
     return render(
         request,
         'core/pacientes/historico/visualizar_formularios_respondidos.html',
+        context
+    )
+    
+
+def visualizar_historico_status_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+
+    query = request.GET.get('q', '').strip()
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+    status = request.GET.get('status')
+    ganhou_beneficio = request.GET.get('ganhou_beneficio')
+    percentual_min = request.GET.get('percentual_min')
+
+    historico = (
+        HistoricoStatus.objects
+        .filter(paciente_id=paciente_id)
+        .select_related('paciente')
+        .order_by('-ano', '-mes')
+    )
+
+    # 🔎 Busca (por mês/ano textual ou status)
+    if query:
+        historico = historico.filter(
+            Q(status__icontains=query) |
+            Q(ano__icontains=query)
+        )
+
+    # 🎯 Status
+    if status:
+        historico = historico.filter(status=status)
+
+    # 🎁 Benefício
+    if ganhou_beneficio in ["0", "1"]:
+        historico = historico.filter(
+            ganhou_beneficio=bool(int(ganhou_beneficio))
+        )
+
+    # 📊 Percentual mínimo
+    if percentual_min:
+        try:
+            historico = historico.filter(
+                percentual__gte=float(percentual_min)
+            )
+        except ValueError:
+            pass
+
+    # 📅 Data início/fim (baseado em data_registro)
+    if data_inicio:
+        historico = historico.filter(
+            data_registro__date__gte=data_inicio
+        )
+
+    if data_fim:
+        historico = historico.filter(
+            data_registro__date__lte=data_fim
+        )
+
+    paginator = Paginator(historico, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'paciente': paciente,
+        'page_obj': page_obj,
+    }
+
+    return render(
+        request,
+        'core/pacientes/historico/visualizar_historico_status.html',
         context
     )
