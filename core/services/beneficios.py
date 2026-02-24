@@ -91,13 +91,23 @@ def beneficios_disponiveis(paciente, mes, ano):
         return {'tem_beneficio': False, 'beneficios': []}
     
     # Verificar usos
-    usados = set(
-        UsoBeneficio.objects.filter(paciente=paciente, mes=mes, ano=ano)
-        .values_list('tipo', flat=True)
-    )
-    
+
+    usos_qs = UsoBeneficio.objects.filter(
+    paciente=paciente,
+    mes=mes,
+    ano=ano
+)
+
+    usados = set(usos_qs.values_list('tipo', flat=True))
+
+    # mapa tipo -> data de uso
+    usado_em_map = {
+        u.tipo: u.usado_em  # ← TROQUE pelo nome real do campo de data no seu model
+        for u in usos_qs
+}
     for b in base:
         b['usado'] = b['tipo'] in usados
+        b['usado_em'] = usado_em_map.get(b['tipo'])
         
         # Calcular validade baseado na origem
         if b.get('origem') == 'aniversario':
@@ -113,6 +123,10 @@ def beneficios_disponiveis(paciente, mes, ano):
         'beneficios': base,
         'tem_aniversario': any(b.get('origem') == 'aniversario' for b in base)
     }
+
+
+
+    
 from django.db import transaction
 def usar_beneficio(*, paciente, mes, ano, tipo, usuario=None, agendamento=None, valor_desconto=None):
     # 1. Buscar histórico

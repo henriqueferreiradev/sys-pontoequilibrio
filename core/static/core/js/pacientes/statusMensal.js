@@ -146,7 +146,14 @@ function linhaHTML(item) {
 }
 
 
-
+function formatarDataBR(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const dia = String(d.getDate()).padStart(2, "0");
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const ano = d.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
 // ----- helpers (aceita vírgula, milhar etc.)
 function parseNumberBR(txt) {
   if (txt == null) return NaN;
@@ -285,8 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (aplicarBtn) {
-  aplicarBtn.addEventListener('click', aplicarFiltro);
-}
+    aplicarBtn.addEventListener('click', aplicarFiltro);
+  }
 
   // (Opcional) Atualizar automaticamente ao trocar mês/ano:
   filtroMes.addEventListener('change', aplicarFiltro);
@@ -695,8 +702,8 @@ async function openBenefits(elementoOuId) {
           <div>
             <h4 class="benefit-name">${b.titulo}</h4>
             <p class="benefit-date">
-              ${b.usado ? "Utilizado" : "Disponível"}
-              ${b.percentual ? ` • ${b.percentual}%` : ""}
+              ${b.usado ? `Utilizado em ${formatarDataBR(b.usado_em)}` : "Disponível"}
+              ${b.percentual ? ` • ${b.percentual}%` : ""} 
             </p>
           </div>
           ${b.usado

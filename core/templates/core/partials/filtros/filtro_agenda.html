@@ -44,11 +44,11 @@
       </div>
   
         <div class="filtro-campo">
-          <label for="filtro-status">Status</label>
+          <label for="filtro-status"></label>
           <div class="status-col">
               <select name="status" class="filtro-select">
                 <option value="" {% if not request.GET.status %}selected{% endif %}>
-                  Selecione um status
+                  Selecione a situação...
                 </option>
 
                 <option value="pre" {% if request.GET.status == "pre" %}selected{% endif %}>✅ Pré-Agendado</option>
