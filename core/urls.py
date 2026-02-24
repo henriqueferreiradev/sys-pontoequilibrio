@@ -67,8 +67,8 @@ urlpatterns = [
     path('api/listar-lembretes-agendamentos/', agendamento_views.listar_lembretes_agendamento),
     path('api/enviar-lembrete/<int:agendamento_id>/', agendamento_views.enviar_lembrete_agenda, name='enviar_lembrete_agenda'),
         path('api/produtividade/', administrativo_views.carregar_produtividade, name='carregar_produtividade'),
-
-    
+path("api/produtividade/fechar/", administrativo_views.fechar_produtividade, name="fechar_produtividade"),
+    path("api/produtividade/salvar/", administrativo_views.salvar_produtividade, name="salvar_produtividade"),
     path('api/detalhe-nf-emitida/pendencia/<int:pendencia_id>/', administrativo_views.api_detalhes_notafiscal_por_pendencia),
     #RECEITAS    
     path('receita/<int:receita_id>/dados-pagamento/', api_views.dados_pagamento, name='dados_pagamento'),
@@ -134,6 +134,7 @@ urlpatterns = [
     path('administrativo/dashboard/', administrativo_views.dashboard, name="dashboard_adm"),
     path('administrativo/notas_fiscais/', administrativo_views.notas_fiscais_views,name='notas_fiscais'),
     path('administrativo/produtividade/', administrativo_views.produtividade_views,name='produtividade'),
+    
     path('administrativo/documentos/', administrativo_views.documentos_clinica_views ,name='documentos_clinica'),
     path('agenda/', agendamento_views.agenda_view, name='agenda'),
     path('agenda_profissional/', profissionais_views.agenda_profissional, name='agenda_profissional'),

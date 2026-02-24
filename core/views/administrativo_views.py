@@ -373,17 +373,18 @@ def carregar_produtividade(request):
         mes=mes
     )
 
-
+    if relatorio.status == 'fechado':
+        dias = relatorio.dias.order_by('dia')
+        return JsonResponse(montar_json_snapshot(relatorio, dias))
     total_dias = monthrange(ano, mes)[1]
-
-    from datetime import datetime
+ 
 
     for dia in range(1, total_dias + 1):
 
         tipo_dia = definir_tipo_dia(relatorio.profissional, ano, mes, dia)
 
         if tipo_dia is None:
-            continue
+            tipo_dia = 'nao_previsto'
 
         horas_previstas_min = 0
 
@@ -436,12 +437,9 @@ def carregar_produtividade(request):
             }
         )
 
-        if not created:
-            dia_obj.tipo_dia = tipo_dia
-            dia_obj.horas_previstas_min = horas_previstas_min
-            dia_obj.save()
+ 
 
-
+    print("STATUS DO RELATORIO:", relatorio.status)
     dias = relatorio.dias.order_by('dia')
 
     if relatorio.status == 'fechado':
@@ -726,3 +724,127 @@ def montar_json_snapshot(relatorio, dias):
             "razao_prontuario": float(relatorio.razao_prontuario),
         }
     }
+
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.utils import timezone
+@login_required
+@require_POST
+def fechar_produtividade(request):
+
+    data = json.loads(request.body)
+
+    profissional_id = data.get("profissional")
+    ano = data.get("ano")
+    mes = data.get("mes")
+    dias_front = data.get("dias", [])
+
+    relatorio = get_object_or_404(
+        ProdutividadeMensal,
+        profissional_id=profissional_id,
+        ano=ano,
+        mes=mes
+    )
+
+    if relatorio.status == "fechado":
+        return JsonResponse({"ok": False, "error": "Já fechado"}, status=400)
+
+    with transaction.atomic():
+
+        # 🔹 1 - SALVA ALTERAÇÕES MANUAIS
+        for dia_data in dias_front:
+
+            dia_obj = ProdutividadeDia.objects.get(
+                relatorio=relatorio,
+                dia=dia_data["dia"]
+            )
+
+            dia_obj.tipo_dia = dia_data["tipo_dia"]
+            dia_obj.presenca = dia_data["presenca"]
+            dia_obj.horas_previstas_min = dia_data["horas_previstas_min"]
+            dia_obj.horas_prontuario_min = dia_data["horas_prontuario_min"]
+            dia_obj.horas_coord_min = dia_data["horas_coord_min"]
+            dia_obj.horas_buro_min = dia_data["horas_buro_min"]
+
+            dia_obj.save()
+
+        # 🔹 2 - GERA SNAPSHOT
+        fechar_mes(relatorio)
+
+    return JsonResponse({"ok": True})
+
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db import transaction
+import json
+
+@login_required
+@require_POST
+def salvar_produtividade(request):
+    try:
+        payload = json.loads(request.body)
+
+        profissional_id = int(payload.get("profissional"))
+        ano = int(payload.get("ano"))
+        mes = int(payload.get("mes"))
+        dias = payload.get("dias", [])
+
+        relatorio = ProdutividadeMensal.objects.get(
+            profissional_id=profissional_id,
+            ano=ano,
+            mes=mes
+        )
+
+        if relatorio.status == "fechado":
+            return JsonResponse({"ok": False, "error": "Mês já está fechado."}, status=400)
+
+        mapa_tipo = {
+            "Previsto": "previsto",
+            "Não previsto": "nao_previsto",
+            "Férias": "ferias",
+            "Afastamento": "afastamento",
+            "Atestado": "atestado",
+        }
+
+        mapa_presenca = {
+            "Presente": "presente",
+            "Falta": "falta",
+            "Justificado": "justificado",
+            "Férias": "ferias",
+            "Atestado": "atestado",
+            "Afastamento": "afastamento",
+        }
+
+        def hhmm_to_min(v):
+            if not v or ":" not in v:
+                return 0
+            h, m = v.split(":")
+            return int(h) * 60 + int(m)
+        with transaction.atomic():
+            for d in dias:
+                dia_num = int(d["dia"])
+
+                obj, _ = ProdutividadeDia.objects.get_or_create(
+                    relatorio=relatorio,
+                    dia=dia_num
+                )
+
+                obj.tipo_dia = mapa_tipo.get(d.get("tipo_dia"), "previsto")
+                obj.presenca = mapa_presenca.get(d.get("presenca"), "presente")
+
+                obj.horas_previstas_min = hhmm_to_min(d.get("horas_previstas"))
+                obj.horas_prontuario_min = hhmm_to_min(d.get("horas_prontuario"))
+                obj.horas_coord_min = hhmm_to_min(d.get("horas_coord"))
+                obj.horas_buro_min = hhmm_to_min(d.get("horas_buro"))
+
+                obj.save()
+        return JsonResponse({"ok": True})
+
+    except ProdutividadeMensal.DoesNotExist:
+        return JsonResponse({"ok": False, "error": "Relatório mensal não encontrado."}, status=404)
+    except ProdutividadeDia.DoesNotExist:
+        return JsonResponse({"ok": False, "error": "Dia não encontrado no relatório."}, status=404)
+    except Exception as e:
+        return JsonResponse({"ok": False, "error": str(e)}, status=500)

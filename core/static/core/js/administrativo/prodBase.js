@@ -1,4 +1,6 @@
+
 (function () {
+    let modoSnapshot = false;
     // ----- FUNÇÕES DE CONVERSÃO HH:MM <=> MINUTOS -----
     function timeToMinutes(time) {
         if (!time || !time.includes(':')) return 0;
@@ -105,17 +107,17 @@
 
                     selectPresenca.value = valor;
                     inputPrevistas.value = '00:00';
-                     
+
 
                 } else if (valor === 'Não previsto') {
 
                     selectPresenca.value = 'Presente';
                     inputPrevistas.value = '00:00';
-                     
+
 
                 } else if (valor === 'Previsto') {
 
-                    
+
                     // 🔥 NÃO INVENTA MAIS 07:00
                     // Mantém o valor que já veio do backend
                     if (inputPrevistas.value === '00:00') {
@@ -250,7 +252,7 @@
             spanSaldo.textContent = d.saldoDia;
             tdSaldo.appendChild(spanSaldo);
             tr.appendChild(tdSaldo);
-aplicarCorLinha(tr, d.tipoDia);
+            aplicarCorLinha(tr, d.tipoDia);
             tbody.appendChild(tr);
         });
     }
@@ -429,7 +431,30 @@ aplicarCorLinha(tr, d.tipoDia);
             }
         });
     }
+    function aplicarTotaisSnapshot(totais) {
 
+        document.getElementById('totalPrevistas').textContent = minutesToTime(totais.total_previstas_min);
+        document.getElementById('totalIndividual').textContent = minutesToTime(totais.total_individual_min);
+        document.getElementById('totalConjunto').textContent = minutesToTime(totais.total_conjunto_min);
+        document.getElementById('totalAvaliacoes').textContent = totais.total_avaliacoes;
+        document.getElementById('totalEvolucoes').textContent = totais.total_evolucoes;
+        document.getElementById('totalProntuariosQtd').textContent = totais.total_prontuarios_qtd;
+        document.getElementById('totalHProntuario').textContent = minutesToTime(totais.total_prontuario_min);
+        document.getElementById('totalHCoord').textContent = minutesToTime(totais.total_coord_min);
+        document.getElementById('totalHBuro').textContent = minutesToTime(totais.total_buro_min);
+        document.getElementById('totalTrabalhado').textContent = minutesToTime(totais.total_trabalhadas_min);
+
+        const saldoSpan = document.getElementById('totalSaldo').querySelector('span');
+        saldoSpan.textContent = minutesToTime(totais.total_saldo_min);
+        saldoSpan.className =
+            totais.total_saldo_min > 0 ? 'saldo-pos' :
+                totais.total_saldo_min < 0 ? 'saldo-neg' :
+                    'saldo-zero';
+
+        document.getElementById('razaoProntuario').textContent =
+            totais.razao_prontuario.toString().replace('.', ',');
+
+    }
     async function carregarDadosAPI() {
 
         const profissional = document.getElementById("profissionalSelect").value;
@@ -437,13 +462,18 @@ aplicarCorLinha(tr, d.tipoDia);
         const ano = document.getElementById("anoSelect").value;
 
         if (!profissional || !mes || !ano) {
-             
+
             return;
         }
 
         const response = await fetch(`/api/produtividade/?profissional=${profissional}&mes=${mes}&ano=${ano}`);
         const data = await response.json();
-
+        console.log("DATA DA API:", data);
+        if (data.status === "fechado") {
+            modoSnapshot = true;
+        } else {
+            modoSnapshot = false;
+        }
         const diasConvertidos = data.dias.map(d => {
 
             const saldoMin = d.saldo_min;
@@ -472,7 +502,13 @@ aplicarCorLinha(tr, d.tipoDia);
         });
 
         renderizarTabela(diasConvertidos);
-        calcularTotaisMensais();
+
+        if (!modoSnapshot) {
+            calcularTotaisMensais();
+        } else {
+            aplicarTotaisSnapshot(data.totais);
+            calcularTotaisMensais(); // 🔥 ESSA LINHA RESOLVE TUDO
+        }
     }
 
     function formatarTipo(tipo) {
@@ -485,7 +521,93 @@ aplicarCorLinha(tr, d.tipoDia);
         };
         return mapa[tipo] || 'Previsto';
     }
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    async function fecharMes() {
+        const profissional = document.getElementById("profissionalSelect").value;
+        const mes = document.getElementById("mesSelect").value;
+        const ano = document.getElementById("anoSelect").value;
 
+        if (!profissional || !mes || !ano) return;
+
+        if (!confirm("Tem certeza que deseja FECHAR o mês?")) return;
+
+        const csrftoken = getCookie('csrftoken');
+
+        // 1) Salvar dias primeiro
+        const respSalvar = await fetch("/api/produtividade/salvar/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+            body: JSON.stringify({
+                profissional, ano, mes,
+                dias: coletarDiasDaTabela()
+            })
+        });
+
+        const salvarData = await respSalvar.json();
+        console.log("RESPOSTA SALVAR:", salvarData);
+        if (!salvarData.ok) {
+            alert(salvarData.error || "Erro ao salvar.");
+            return;
+        }
+
+        // 2) Fechar mês (seu endpoint atual)
+        const respFechar = await fetch("/api/produtividade/fechar/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+            body: JSON.stringify({ profissional, ano, mes })
+        });
+
+        const fecharData = await respFechar.json();
+        if (fecharData.ok) {
+            alert("Mês fechado com sucesso!");
+            carregarDadosAPI();
+        } else {
+            alert(fecharData.error || "Erro ao fechar mês.");
+        }
+    }
+    function coletarDiasDaTabela() {
+        const rows = document.querySelectorAll('#tbodyDias tr');
+        const dias = [];
+
+        rows.forEach(row => {
+            const cells = row.cells;
+
+            const dia = parseInt(row.getAttribute('data-dia'), 10);
+
+            const tipoDiaTexto = cells[1]?.querySelector('select')?.value || 'Previsto';
+            const presencaTexto = cells[2]?.querySelector('select')?.value || 'Presente';
+
+            const horasPrevistas = cells[3]?.querySelector('input')?.value || '00:00';
+            const hProntuario = cells[9]?.querySelector('input')?.value || '00:00';
+            const hCoord = cells[10]?.querySelector('input')?.value || '00:00';
+            const hBuro = cells[11]?.querySelector('input')?.value || '00:00';
+
+            dias.push({
+                dia,
+                tipo_dia: tipoDiaTexto,
+                presenca: presencaTexto,
+                horas_previstas: horasPrevistas,
+                horas_prontuario: hProntuario,
+                horas_coord: hCoord,
+                horas_buro: hBuro,
+            });
+        });
+
+        return dias;
+    }
     // Atualizar título com nome real do profissional + mês + ano
     const selectProf = document.getElementById('profissionalSelect');
     const mesSelect = document.getElementById('mesSelect');
@@ -509,20 +631,19 @@ aplicarCorLinha(tr, d.tipoDia);
 
     // Atualiza ao carregar página
     atualizarTitulo();
+    document.getElementById('carregarBtn')
+        .addEventListener('click', function () {
+            carregarDadosAPI();
+        });
 
-
-    // Botões
-    document.getElementById('carregarBtn').addEventListener('click', function () {
-        carregarDadosAPI();
-    });
 
     document.getElementById('salvarBtn').addEventListener('click', function () {
-        alert('💾 Alterações salvas (simulação).');
+        fecharMes()
     });
 
     // Expor para debug
     window.calcularTotaisMensais = calcularTotaisMensais;
-    window.addEventListener("load", function () {
+    document.addEventListener("DOMContentLoaded", function () {
         popularMesAno();
         carregarDadosAPI();
     });
