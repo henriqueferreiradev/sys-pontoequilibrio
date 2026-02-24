@@ -697,22 +697,31 @@ async function openBenefits(elementoOuId) {
     body.innerHTML = beneficios
       .map(
         (b) => `
-      <div class="benefit-item ${b.usado ? "benefit-used" : ""}">
-        <div class="benefit-header">
-          <div>
-            <h4 class="benefit-name">${b.titulo}</h4>
-            <p class="benefit-date">
-              ${b.usado ? `Utilizado em ${formatarDataBR(b.usado_em)}` : "Disponível"}
-              ${b.percentual ? ` • ${b.percentual}%` : ""} 
-            </p>
-          </div>
-          ${b.usado
-            ? `<span class="benefit-status utilizado">Utilizado</span>`
-            : `<span class="benefit-status disponivel">Disponível</span>`
-          }
-        </div>
-      </div>
-    `
+              <div class="benefit-item ${b.usado ? "benefit-used" : ""}">
+                <div class="benefit-header">
+                  <div>
+                    <h4 class="benefit-name">${b.titulo}</h4>
+
+                    <p class="benefit-date">
+                      ${b.usado ? `Utilizado em ${formatarDataBR(b.usado_em)}` : "Disponível"}
+                      ${b.percentual ? ` • ${b.percentual}%` : ""}
+                    </p>
+
+                    ${
+                      b.usado
+                        ? ""
+                        : `<p class="benefit-date">
+                            ${b.valido_ate ? `Válido até ${formatarDataBR(b.valido_ate)}` : "Sem data de validade"}
+                          </p>`
+                    }
+                  </div>
+
+                  ${b.usado
+                    ? `<span class="benefit-status utilizado">Utilizado</span>`
+                    : `<span class="benefit-status disponivel">Disponível</span>`
+                  }
+                </div>
+              </div>`
       )
       .join("");
   } catch (e) {

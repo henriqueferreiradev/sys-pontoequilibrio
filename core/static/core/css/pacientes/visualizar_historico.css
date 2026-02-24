@@ -108,7 +108,7 @@
     box-shadow: 0 4px 12px rgba(107, 70, 193, 0.1);
     border-color: var(--roxoPrincipal);
 }
- 
+
 .prontuario-info,
 .avaliacao-info,
 .agendamento-info,
@@ -326,7 +326,7 @@ body.modal.show {
     overflow: hidden;
     padding: .5em;
     border-radius: 16px;
-    max-width: 60%;
+
 }
 
 /* ===== HEADER & FOOTER FIXOS ===== */
@@ -435,6 +435,7 @@ body.modal.show {
     padding: 1.5rem;
     overflow: auto;
 }
+
 .content-list {
     display: flex;
     flex-direction: column;
@@ -455,6 +456,7 @@ body.modal.show {
     display: inline-flex;
     align-items: center;
 }
+
 .badge-premium {
     background-color: #f59e0b;
 }
@@ -555,6 +557,14 @@ body.modal.show {
     display: flex;
     flex-direction: column;
     gap: 1em;
+}
+
+.btn-benefits {
+    color: var(--roxoPrincipal);
+}
+
+.btn-benefits:hover {
+    color: var(--roxo-primary-hover);
 }
 
 .btn-close {
