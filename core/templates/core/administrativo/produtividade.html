@@ -20,9 +20,6 @@
     
 </head>
 <body>
-    <div class="dashboard">
-
-        
         <div class="filters-card">
             <div class="filters-group">
                 <div class="filter-item">
@@ -39,25 +36,25 @@
                 <div class="filter-item">
                     <label><i class="fas fa-calendar"></i> Mês</label>
                     <select class="filter-select" id="mesSelect">
-  
+
                     </select>
                 </div>
                 <div class="filter-item">
                     <label><i class="fas fa-calendar-alt"></i> Ano</label>
                     <select class="filter-select" id="anoSelect">
- 
+
                     </select>
                 </div>
-                <button class="btn btn-primary" id="carregarBtn"><i class="fas fa-sync-alt"></i> Carregar relatório</button>
-                <button class="btn btn-outline" id="salvarBtn"><i class="fas fa-save"></i> Salvar alterações</button>
-                <button class="btn btn-outline" id="salvarParcialmenteBtn"><i class="fas fa-save"></i> Salvar Parcialmente</button>
+
             </div>
-            <span class="badge-sector" id="setorBadge"><i class="fas fa-stethoscope"></i> Setor: Fisioterapeutas</span>
+            <button class="btn btn-primary" id="carregarBtn"><i class="fas fa-sync-alt"></i> Carregar</button>
+
         </div>
- 
- 
+    <div class="dashboard">
+
+
         <div class="side-panel">
-           
+            
             <div class="resumo-card card-dias">
                 <h3><i class="fas fa-calendar-check"></i> DIAS</h3>
                 <div class="metric-item"><span class="metric-label">Previstos:</span><span class="metric-value" id="diasPrevistosValor">0 (100%)</span></div>
@@ -68,7 +65,7 @@
                 <div class="metric-item"><span class="metric-label">Previstas (100%):</span><span class="metric-value" id="horasPrevistasValor">00:00</span></div>
                 <div class="metric-item"><span class="metric-label">Trabalhadas:</span><span class="metric-value" id="horasTrabalhadasValor">00:00 <span class="badge-percent" id="horasPercent">0%</span></span></div>
             </div>
- 
+
             <div class="resumo-card card-distribuicao">
                 <h3><i class="fas fa-chart-pie"></i> DISTRIBUIÇÃO</h3>
                 <div class="distrib-list" id="distribuicaoList">
@@ -78,12 +75,12 @@
                     <div class="distrib-item"><span>Coordenação</span> <span><strong id="distribCoord">00:00</strong> <span class="porcentagem" id="percCoord">0%</span></span></div>
                     <div class="distrib-item"><span>Burocrático</span> <span><strong id="distribBuro">00:00</strong> <span class="porcentagem" id="percBuro">0%</span></span></div>
                 </div>
-                 <div class="chart-container">
+                    <div class="chart-container">
                     <canvas id="horasChart" style="width:100%; height:160px;"></canvas>
                 </div>
             </div>
             
-             <div class="resumo-card card-prontuarios">
+                <div class="resumo-card card-prontuarios">
                 <h3><i class="fas fa-file-medical"></i> PRONTUÁRIOS</h3>
                 <div class="metric-item"><span class="metric-label">Total prontuários:</span><span class="metric-value" id="prontuariosTotal">0</span></div>
                 <div class="metric-item"><span class="metric-label">Horas de prontuário:</span><span class="metric-value" id="prontuariosHoras">00:00</span></div>
@@ -94,13 +91,13 @@
                 </div>
             </div>
             
-             <div class="resumo-card card-indicadores">
+                <div class="resumo-card card-indicadores">
                 <h3><i class="fas fa-chart-line"></i> INDICADORES</h3>
                 <div class="metric-item"><span class="metric-label">Total avaliações:</span><span class="metric-value" id="totalAvaliacoesInd">0</span></div>
                 <div class="metric-item"><span class="metric-label">Total evoluções:</span><span class="metric-value" id="totalEvolucoesInd">0</span></div>
             </div>
             
-             <div class="resumo-card card-saldo">
+                <div class="resumo-card card-saldo">
                 <h3 style="color: var(--roxoPrincipal-hover2);"><i class="fas fa-flag-checkered"></i> SALDO FINAL</h3>
                 <div style="display: flex; justify-content: space-between; align-items: baseline;">
                     <span style="font-size: 1.3rem; font-weight: 900;" id="saldoFinalValor">00:00</span>
@@ -109,13 +106,15 @@
                 <div style="font-size:0.8rem; color: var(--roxoPrincipal-hover2); margin-top: 4px;">Horas trabalhadas – Previstas</div>
             </div>
         </div>
-     
+
         <div class="main-grid">
-             <div class="table-section">
+                <div class="table-section">
                 <div class="table-header-title">
                     <i class="fas fa-clipboard-list" style="font-size: 1.2rem;"></i>
                     <span style="font-weight: 700; font-size: 0.95rem; color: var(--roxoPrincipal-hover2);" id="tituloRelatorio">Fevereiro 2025 · Dra. Carla Mendes</span>
                     <span class="badge-simples"><i class="fas fa-clock"></i> Horas em HH:MM</span>
+                                    <button class="btn btn-outline" id="salvarBtn"><i class="fas fa-save"></i> Salvar alterações</button>
+                <button class="btn btn-outline" id="salvarParcialmenteBtn"><i class="fas fa-save"></i> Salvar Parcialmente</button>
                 </div>
                 <div style="overflow-x: auto; padding: 0 4px; max-height: 2000px; overflow-y: auto;">
                 <table class="prod-table" id="tabelaProdutividade">
@@ -138,7 +137,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbodyDias">
-                     </tbody>
+                        </tbody>
                     <tfoot>
                         <tr class="total-row" id="rowTotalMensal">
                             <td class="row-day-label" style="background:#e6d3ee;"><strong>TOTAL MÊS</strong></td>
@@ -162,9 +161,35 @@
                 <div class="info-hint"><i class="fas fa-info-circle"></i> Campos editáveis: horas previstas, prontuário, coordenação, burocrático. Os cálculos são automáticos.</div>
             </div>
 
- 
- 
+
+
         </div>
+
+        <div id="confirmSaveModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+            <h3 class="modal-title">Confirmar salvamento</h3>
+            </div>
+
+            <div class="modal-body">
+            <p id="confirmText">
+                Você está prestes a salvar <span id="confirmMesAno">este mês/ano</span>.
+            </p>
+
+            <p id="confirmHint" style="opacity: 0.8; margin-top: 0.5rem">
+                Deseja continuar?
+            </p>
+            </div>
+
+            <div class="modal-footer">
+            <button class="btn-close" id="cancelConfirmSave">Cancelar</button>
+            <button class="btn btn-primary" id="confirmSaveAction">Confirmar</button>
+            </div>
+        </div>
+        </div>
+
+  </div>
+  
     </div>
 <script src="https://unpkg.com/imask"></script>
 <script src="{% static 'core/js/administrativo/prodBase.js' %}"></script>

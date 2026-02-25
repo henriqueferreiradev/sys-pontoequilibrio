@@ -1,6 +1,69 @@
 
 (function () {
+    function mostrarMensagem(mensagem, tipo = 'success') {
+        const toastContainer = document.getElementById('toast-container') || criarToastContainer();
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${tipo} toast-slide-in`;
+        toast.innerHTML = `
+        <div class="toast-content">
+            <div class="toast-header">
+                <div class="toast-icon">
+                    ${getIcon(tipo)}
+                </div>
+                <div class="toast-title">
+                    ${getTitle(tipo)}
+                </div>
+                <button class="toast-close" onclick="this.parentElement.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div>${mensagem}</div>
+        </div>
+    `;
+
+        toastContainer.appendChild(toast);
+
+        // Remove após 5 segundos
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('toast-slide-out');
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 5000);
+    }
+
+    // Funções auxiliares
+    function criarToastContainer() {
+        const container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    function getIcon(tipo) {
+        const icons = {
+            'success': '<i class="fas fa-check-circle"></i>',
+            'warning': '<i class="fas fa-exclamation-triangle"></i>',
+            'error': '<i class="fas fa-exclamation-circle"></i>',
+            'info': '<i class="fas fa-info-circle"></i>'
+        };
+        return icons[tipo] || icons['info'];
+    }
+
+    function getTitle(tipo) {
+        const titles = {
+            'success': 'Sucesso',
+            'warning': 'Aviso',
+            'error': 'Erro',
+            'info': 'Informação'
+        };
+        return titles[tipo] || 'Mensagem';
+    }
+
     let modoSnapshot = false;
+    let tipoConfirmacao = null;
     // ----- FUNÇÕES DE CONVERSÃO HH:MM <=> MINUTOS -----
     function timeToMinutes(time) {
         if (!time || !time.includes(':')) return 0;
@@ -522,9 +585,19 @@
         const data = await response.json();
         console.log("DATA DA API:", data);
         if (data.status === "fechado") {
+
             modoSnapshot = true;
         } else {
             modoSnapshot = false;
+        }
+        if (data.status === "fechado") {
+            // trava UI
+            document.getElementById('salvarBtn').disabled = true;
+            document.getElementById('salvarParcialmenteBtn').disabled = true;
+            mostrarMensagem("Mês já está fechado — modo somente leitura.", "info");
+        } else {
+            document.getElementById('salvarBtn').disabled = false;
+            document.getElementById('salvarParcialmenteBtn').disabled = false;
         }
         const diasConvertidos = data.dias.map(d => {
 
@@ -563,6 +636,39 @@
         }
     }
 
+    function confirmarFechamento(tipo) {
+        tipoConfirmacao = tipo;
+
+        const modal = document.getElementById('confirmSaveModal');
+        const titulo = modal.querySelector('.modal-title');
+        const texto = document.getElementById('confirmText');
+        const hint = document.getElementById('confirmHint');
+
+        const mesNome = document.getElementById("mesSelect")
+            .options[document.getElementById("mesSelect").selectedIndex].text;
+
+        const ano = document.getElementById("anoSelect").value;
+
+        document.getElementById('confirmMesAno').textContent = `${mesNome} ${ano}`;
+
+        if (tipo === 'fechado') {
+            titulo.textContent = "Confirmar fechamento do mês";
+            texto.innerHTML = `
+            Você está prestes a <strong>FECHAR definitivamente</strong>
+            o mês <strong>${mesNome} ${ano}</strong>.
+        `;
+            hint.textContent = "Após fechar, o mês ficará somente leitura.";
+        } else {
+            titulo.textContent = "Confirmar salvamento parcial";
+            texto.innerHTML = `
+            Você está prestes a salvar parcialmente
+            o mês <strong>${mesNome} ${ano}</strong>.
+        `;
+            hint.textContent = "Você poderá continuar editando depois.";
+        }
+
+        modal.classList.add('show');
+    }
 
     function formatarTipo(tipo) {
         const mapa = {
@@ -593,65 +699,54 @@
 
 
     async function fecharMes(tipo) {
-
         const profissional = document.getElementById("profissionalSelect").value;
         const mes = document.getElementById("mesSelect").value;
         const ano = document.getElementById("anoSelect").value;
 
         if (!profissional || !mes || !ano) return;
 
-        const mensagem = tipo === "final"
-            ? "Tem certeza que deseja FECHAR o mês definitivamente?"
-            : "Deseja salvar parcialmente o mês?";
-
-        if (!confirm(mensagem)) return;
-
         const csrftoken = getCookie('csrftoken');
 
-        // 1) Sempre salva os dias primeiro
+        // 1) SALVAR
         const respSalvar = await fetch("/api/produtividade/salvar/", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
-            },
+            headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
             body: JSON.stringify({
-                profissional,
-                ano,
-                mes,
+                profissional, ano, mes,
                 dias: coletarDiasDaTabela(),
                 tipo: tipo
             })
         });
 
-        const salvarData = await respSalvar.json();
+        let salvarData = null;
+        try { salvarData = await respSalvar.json(); } catch (e) { }
 
-        if (!salvarData.ok) {
-            alert(salvarData.error || "Erro ao salvar.");
+        if (!respSalvar.ok || !salvarData?.ok) {
+            const msg = salvarData?.error || "Erro ao salvar (mês pode já estar fechado).";
+            mostrarMensagem(msg, "error");
             return;
         }
 
-        // 🔒 Só fecha definitivamente se for final
-        if (tipo === "final") {
+        // 2) FECHAR (só se for fechamento)
+        if (tipo === "fechado") {
             const respFechar = await fetch("/api/produtividade/fechar/", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrftoken
-                },
+                headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
                 body: JSON.stringify({ profissional, ano, mes })
             });
 
-            const fecharData = await respFechar.json();
+            let fecharData = null;
+            try { fecharData = await respFechar.json(); } catch (e) { }
 
-            if (!fecharData.ok) {
-                alert(fecharData.error || "Erro ao fechar mês.");
+            if (!respFechar.ok || !fecharData?.ok) {
+                const msg = fecharData?.error || "Erro ao fechar mês.";
+                mostrarMensagem(msg, "error");
                 return;
             }
 
-            alert("Mês fechado com sucesso!");
+            mostrarMensagem("Mês fechado com sucesso!", "success");
         } else {
-            alert("Mês salvo parcialmente com sucesso!");
+            mostrarMensagem("Mês salvo parcialmente com sucesso!", "success");
         }
 
         carregarDadosAPI();
@@ -722,26 +817,61 @@
         }
     }
     // Atualiza quando trocar profissional, mês ou ano
-    selectProf.addEventListener('change', atualizarTitulo);
-    mesSelect.addEventListener('change', atualizarTitulo);
-    anoSelect.addEventListener('change', atualizarTitulo);
+    selectProf.addEventListener('change', function () {
+        atualizarTitulo();
+        escondeElementos();
+    });
+
+    mesSelect.addEventListener('change', function () {
+        atualizarTitulo();
+        escondeElementos();
+    });
+
+    anoSelect.addEventListener('change', function () {
+        atualizarTitulo();
+        escondeElementos();
+    });
     // Atualiza ao carregar página
     atualizarTitulo();
 
-    document.getElementById('carregarBtn')
-        .addEventListener('click', function () {
-            carregarDadosAPI();
-        });
+    document.getElementById('carregarBtn').addEventListener('click', function () {
+        const profissional = document.getElementById("profissionalSelect").value;
+        const mes = document.getElementById("mesSelect").value;
+        const ano = document.getElementById("anoSelect").value;
+
+        if (!profissional || !mes || !ano) {
+            mostrarMensagem("Selecione profissional, mês e ano para carregar os dados.", "error");
+            return;
+        }
+        carregarDadosAPI();
+    });
 
 
     document.getElementById('salvarBtn').addEventListener('click', function () {
-        fecharMes('fechado')
+        confirmarFechamento('fechado')
     });
 
     document.getElementById('salvarParcialmenteBtn').addEventListener('click', function () {
-        fecharMes('parcial')
+        confirmarFechamento('parcial')
+    });
+    function abrirModalConfirm(tipo) {
+        tipoConfirmacao = tipo;
+        document.getElementById('confirmSaveModal').classList.add('show');
+    }
+
+    function fecharModalConfirm() {
+        document.getElementById('confirmSaveModal').classList.remove('show');
+        tipoConfirmacao = null;
+    }
+    document.getElementById('cancelConfirmSave').addEventListener('click', () => {
+        fecharModalConfirm();
     });
 
+    document.getElementById('confirmSaveAction').addEventListener('click', () => {
+        const tipo = tipoConfirmacao;
+        fecharModalConfirm();
+        if (tipo) fecharMes(tipo);
+    });
     // Expor para debug
     window.calcularTotaisMensais = calcularTotaisMensais;
     document.addEventListener("DOMContentLoaded", function () {
