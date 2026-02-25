@@ -442,58 +442,95 @@
  }
 
  /* verde claro */
-.row-previsto td {
-  background: #e8f7ee !important;
-}
+ .row-previsto td {
+     background: #e8f7ee !important;
+ }
 
-/* vermelho clarinho */
-.row-nao-previsto td {
-  background: #ffe9e9 !important;
-}
+ /* vermelho clarinho */
+ .row-nao-previsto td {
+     background: #ffe9e9 !important;
+ }
 
-/* fundo da row */
-tr.row-previsto { background: rgba(32,177,90,0.10); }
-tr.row-nao-previsto { background: rgba(229,57,53,0.10); }
+ /* fundo da row */
+ tr.row-previsto {
+     background: rgba(32, 177, 90, 0.10);
+ }
 
-/* borda do select */
-.day-select.tipo-previsto{
-  border: 1px solid #20b15a !important;
-  box-shadow: 0 0 0 3px rgba(32,177,90,0.12);
-}
-.day-select.tipo-nao-previsto{
-  border: 1px solid #e53935 !important;
-  box-shadow: 0 0 0 3px rgba(229,57,53,0.12);
-}
-.side-panel {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-areas: 
-        "dias horas distribuicao"
-        "prontuarios indicadores distribuicao"
-        "prontuarios saldo distribuicao";
-    gap: 1rem;
-}
+ tr.row-nao-previsto {
+     background: rgba(229, 57, 53, 0.10);
+ }
 
-.card-dias {
-    grid-area: dias;
-}
+ /* borda do select */
+ .day-select.tipo-previsto {
+     border: 1px solid #20b15a !important;
+     box-shadow: 0 0 0 3px rgba(32, 177, 90, 0.12);
+ }
 
-.card-horas {
-    grid-area: horas;
-}
+ .day-select.tipo-nao-previsto {
+     border: 1px solid #e53935 !important;
+     box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+ }
 
-.card-distribuicao {
-    grid-area: distribuicao;
-}
+ .side-panel {
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     grid-template-areas:
+         "dias horas distribuicao"
+         "prontuarios indicadores distribuicao"
+         "prontuarios saldo distribuicao";
+     gap: 1rem;
+ }
 
-.card-prontuarios {
-    grid-area: prontuarios;
-}
+ .card-dias {
+     grid-area: dias;
+ }
 
-.card-indicadores {
-    grid-area: indicadores;
-}
+ .card-horas {
+     grid-area: horas;
+ }
 
-.card-saldo {
-    grid-area: saldo;
-}
+ .card-distribuicao {
+     grid-area: distribuicao;
+ }
+
+ .card-prontuarios {
+     grid-area: prontuarios;
+ }
+
+ .card-indicadores {
+     grid-area: indicadores;
+ }
+
+ .card-saldo {
+     grid-area: saldo;
+ }
+
+ .hidden {
+     display: none;
+ }
+
+ /* Estado vazio */
+ .empty-state {
+     padding: var(--espaco-xl) var(--espaco-lg);
+     text-align: center;
+     color: var(--cinza-medio);
+     display: block;
+ }
+
+ .empty-icon {
+     font-size: 48px;
+     color: var(--cinza-claro);
+     margin-bottom: var(--espaco-lg);
+ }
+
+ .empty-state h3 {
+     font-size: 22px;
+     font-weight: 600;
+     margin-bottom: var(--espaco-sm);
+     color: var(--roxoPrincipal);
+ }
+
+ .empty-state p {
+     max-width: 500px;
+     margin: 0 auto var(--espaco-md);
+ }

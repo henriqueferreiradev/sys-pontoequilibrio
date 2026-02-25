@@ -1,18 +1,16 @@
 from datetime import datetime, timedelta 
-from multiprocessing import context
-import stat
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout
 from django.contrib import contenttypes, messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Sum
 from django.http import JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.template.context_processors import request
-from django.contrib.auth.models import User
 import json
 from core.models import Agendamento, AvaliacaoFisioterapeutica, ConfigAgenda, DocumentoClinica, EscalaBaseProfissional, Evolucao, NotaFiscalCancelada, NotaFiscalEmitida, NotaFiscalPendente, ProdutividadeDia, ProdutividadeMensal, Profissional, Prontuario, TipoDocumentoEmpresa
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 def dashboard(request):
  
@@ -725,20 +723,14 @@ def montar_json_snapshot(relatorio, dias):
         }
     }
 
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from django.utils import timezone
+
 @login_required
 @require_POST
 def fechar_produtividade(request):
-
     data = json.loads(request.body)
-
     profissional_id = data.get("profissional")
     ano = data.get("ano")
     mes = data.get("mes")
-    dias_front = data.get("dias", [])
 
     relatorio = get_object_or_404(
         ProdutividadeMensal,
@@ -751,52 +743,29 @@ def fechar_produtividade(request):
         return JsonResponse({"ok": False, "error": "Já fechado"}, status=400)
 
     with transaction.atomic():
-
-        # 🔹 1 - SALVA ALTERAÇÕES MANUAIS
-        for dia_data in dias_front:
-
-            dia_obj = ProdutividadeDia.objects.get(
-                relatorio=relatorio,
-                dia=dia_data["dia"]
-            )
-
-            dia_obj.tipo_dia = dia_data["tipo_dia"]
-            dia_obj.presenca = dia_data["presenca"]
-            dia_obj.horas_previstas_min = dia_data["horas_previstas_min"]
-            dia_obj.horas_prontuario_min = dia_data["horas_prontuario_min"]
-            dia_obj.horas_coord_min = dia_data["horas_coord_min"]
-            dia_obj.horas_buro_min = dia_data["horas_buro_min"]
-
-            dia_obj.save()
-
-        # 🔹 2 - GERA SNAPSHOT
-        fechar_mes(relatorio)
+        fechar_mes(relatorio)  # aqui congela e seta fechado
 
     return JsonResponse({"ok": True})
 
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.db import transaction
-import json
 
 @login_required
 @require_POST
 def salvar_produtividade(request):
     try:
         payload = json.loads(request.body)
-
+        print(payload)
         profissional_id = int(payload.get("profissional"))
         ano = int(payload.get("ano"))
         mes = int(payload.get("mes"))
         dias = payload.get("dias", [])
+        tipo = payload.get("tipo")
 
         relatorio = ProdutividadeMensal.objects.get(
             profissional_id=profissional_id,
             ano=ano,
             mes=mes
         )
-
+ 
         if relatorio.status == "fechado":
             return JsonResponse({"ok": False, "error": "Mês já está fechado."}, status=400)
 
@@ -840,6 +809,10 @@ def salvar_produtividade(request):
                 obj.horas_buro_min = hhmm_to_min(d.get("horas_buro"))
 
                 obj.save()
+
+            if tipo == "parcial":
+                relatorio.status = "parcial"
+                relatorio.save(update_fields=["status"])
         return JsonResponse({"ok": True})
 
     except ProdutividadeMensal.DoesNotExist:

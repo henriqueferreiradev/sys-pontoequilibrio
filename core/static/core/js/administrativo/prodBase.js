@@ -8,6 +8,47 @@
         return (h || 0) * 60 + (m || 0);
     }
 
+    function aplicarMascaraHora(input) {
+
+        const mask = IMask(input, {
+            mask: 'HH:MM',
+            blocks: {
+                HH: {
+                    mask: IMask.MaskedRange,
+                    from: 0,
+                    to: 99, // permite mais que 23 se quiser
+                    maxLength: 2
+                },
+                MM: {
+                    mask: IMask.MaskedRange,
+                    from: 0,
+                    to: 59,
+                    maxLength: 2
+                }
+            },
+            overwrite: true,
+            autofix: true
+        });
+
+        // 🔥 AUTO COMPLETAR :00
+        input.addEventListener('blur', function () {
+
+            const somenteNumeros = input.value.replace(/\D/g, '');
+
+            if (somenteNumeros.length === 2) {
+                input.value = somenteNumeros + ':00';
+            }
+
+            if (somenteNumeros.length === 1) {
+                input.value = '0' + somenteNumeros + ':00';
+            }
+
+            if (somenteNumeros.length === 0) {
+                input.value = '00:00';
+            }
+        });
+    }
+
     function minutesToTime(min) {
         if (min < 0) {
             let absMin = Math.abs(min);
@@ -19,8 +60,6 @@
         let m = min % 60;
         return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     }
-
-
 
     const tbody = document.getElementById('tbodyDias');
     function popularMesAno() {
@@ -58,6 +97,8 @@
         mesSelect.value = new Date().getMonth() + 1;
         anoSelect.value = anoAtual;
     }
+
+
     function aplicarCorLinha(tr, tipoDia) {
         // ===== LINHA =====
         tr.classList.remove('row-previsto', 'row-nao-previsto');
@@ -72,6 +113,7 @@
         if (tipoDia === 'Previsto') selectTipo.classList.add('tipo-previsto');
         if (tipoDia === 'Não previsto') selectTipo.classList.add('tipo-nao-previsto');
     }
+
 
     function renderizarTabela(dias) {
         tbody.innerHTML = '';
@@ -155,9 +197,10 @@
             inputPrev.type = 'text';
             inputPrev.className = 'time-input';
             inputPrev.value = d.horasPrevistas;
+            aplicarMascaraHora(inputPrev);
             inputPrev.addEventListener('blur', function (e) {
                 let val = e.target.value.trim();
-                if (!val.match(/^\d{2}:\d{2}$/)) e.target.value = '00:00';
+
                 if (val.startsWith('-')) e.target.value = '00:00';
                 calcularDia(tr);
                 calcularTotaisMensais();
@@ -197,6 +240,7 @@
             inputHPrt.type = 'text';
             inputHPrt.className = 'time-input';
             inputHPrt.value = d.hProntuario;
+            aplicarMascaraHora(inputHPrt);
             inputHPrt.addEventListener('blur', function (e) {
                 if (!e.target.value.match(/^\d{2}:\d{2}$/)) e.target.value = '00:00';
                 if (e.target.value.startsWith('-')) e.target.value = '00:00';
@@ -213,6 +257,7 @@
             inputHCoord.type = 'text';
             inputHCoord.className = 'time-input';
             inputHCoord.value = d.hCoord;
+            aplicarMascaraHora(inputHCoord);
             inputHCoord.addEventListener('blur', function (e) {
                 if (!e.target.value.match(/^\d{2}:\d{2}$/)) e.target.value = '00:00';
                 if (e.target.value.startsWith('-')) e.target.value = '00:00';
@@ -229,6 +274,7 @@
             inputHBuro.type = 'text';
             inputHBuro.className = 'time-input';
             inputHBuro.value = d.hBuro;
+            aplicarMascaraHora(inputHBuro);
             inputHBuro.addEventListener('blur', function (e) {
                 if (!e.target.value.match(/^\d{2}:\d{2}$/)) e.target.value = '00:00';
                 if (e.target.value.startsWith('-')) e.target.value = '00:00';
@@ -256,6 +302,7 @@
             tbody.appendChild(tr);
         });
     }
+
 
     // ----- CALCULAR LINHA DO DIA (TOTAL E SALDO) -----
     function calcularDia(row) {
@@ -288,6 +335,7 @@
         spanSaldo.className = saldoClass;
         spanSaldo.textContent = saldoDia;
     }
+
 
     // ----- CALCULAR TOTAIS MENSAIS E ATUALIZAR PAINEL -----
     function calcularTotaisMensais() {
@@ -431,6 +479,8 @@
             }
         });
     }
+
+
     function aplicarTotaisSnapshot(totais) {
 
         document.getElementById('totalPrevistas').textContent = minutesToTime(totais.total_previstas_min);
@@ -455,12 +505,14 @@
             totais.razao_prontuario.toString().replace('.', ',');
 
     }
+
+
     async function carregarDadosAPI() {
 
         const profissional = document.getElementById("profissionalSelect").value;
         const mes = document.getElementById("mesSelect").value;
         const ano = document.getElementById("anoSelect").value;
-
+        mostrarElementos()
         if (!profissional || !mes || !ano) {
 
             return;
@@ -511,6 +563,7 @@
         }
     }
 
+
     function formatarTipo(tipo) {
         const mapa = {
             'previsto': 'Previsto',
@@ -521,6 +574,8 @@
         };
         return mapa[tipo] || 'Previsto';
     }
+
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -535,49 +590,73 @@
         }
         return cookieValue;
     }
-    async function fecharMes() {
+
+
+    async function fecharMes(tipo) {
+
         const profissional = document.getElementById("profissionalSelect").value;
         const mes = document.getElementById("mesSelect").value;
         const ano = document.getElementById("anoSelect").value;
 
         if (!profissional || !mes || !ano) return;
 
-        if (!confirm("Tem certeza que deseja FECHAR o mês?")) return;
+        const mensagem = tipo === "final"
+            ? "Tem certeza que deseja FECHAR o mês definitivamente?"
+            : "Deseja salvar parcialmente o mês?";
+
+        if (!confirm(mensagem)) return;
 
         const csrftoken = getCookie('csrftoken');
 
-        // 1) Salvar dias primeiro
+        // 1) Sempre salva os dias primeiro
         const respSalvar = await fetch("/api/produtividade/salvar/", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
             body: JSON.stringify({
-                profissional, ano, mes,
-                dias: coletarDiasDaTabela()
+                profissional,
+                ano,
+                mes,
+                dias: coletarDiasDaTabela(),
+                tipo: tipo
             })
         });
 
         const salvarData = await respSalvar.json();
-        console.log("RESPOSTA SALVAR:", salvarData);
+
         if (!salvarData.ok) {
             alert(salvarData.error || "Erro ao salvar.");
             return;
         }
 
-        // 2) Fechar mês (seu endpoint atual)
-        const respFechar = await fetch("/api/produtividade/fechar/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
-            body: JSON.stringify({ profissional, ano, mes })
-        });
+        // 🔒 Só fecha definitivamente se for final
+        if (tipo === "final") {
+            const respFechar = await fetch("/api/produtividade/fechar/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken
+                },
+                body: JSON.stringify({ profissional, ano, mes })
+            });
 
-        const fecharData = await respFechar.json();
-        if (fecharData.ok) {
+            const fecharData = await respFechar.json();
+
+            if (!fecharData.ok) {
+                alert(fecharData.error || "Erro ao fechar mês.");
+                return;
+            }
+
             alert("Mês fechado com sucesso!");
-            carregarDadosAPI();
         } else {
-            alert(fecharData.error || "Erro ao fechar mês.");
+            alert("Mês salvo parcialmente com sucesso!");
         }
+
+        carregarDadosAPI();
     }
+
     function coletarDiasDaTabela() {
         const rows = document.querySelectorAll('#tbodyDias tr');
         const dias = [];
@@ -608,6 +687,7 @@
 
         return dias;
     }
+
     // Atualizar título com nome real do profissional + mês + ano
     const selectProf = document.getElementById('profissionalSelect');
     const mesSelect = document.getElementById('mesSelect');
@@ -623,14 +703,31 @@
 
         document.getElementById('tituloRelatorio').textContent = titulo;
     }
+    function escondeElementos() {
+        const sidePanel = document.querySelector('.side-panel');
+        const mainGrid = document.querySelector('.main-grid');
 
+        if (sidePanel && mainGrid) {
+            sidePanel.classList.add('hidden');
+            mainGrid.classList.add('hidden');
+        }
+    }
+    function mostrarElementos() {
+        const sidePanel = document.querySelector('.side-panel');
+        const mainGrid = document.querySelector('.main-grid');
+
+        if (sidePanel && mainGrid) {
+            sidePanel.classList.remove('hidden');
+            mainGrid.classList.remove('hidden');
+        }
+    }
     // Atualiza quando trocar profissional, mês ou ano
     selectProf.addEventListener('change', atualizarTitulo);
     mesSelect.addEventListener('change', atualizarTitulo);
     anoSelect.addEventListener('change', atualizarTitulo);
-
     // Atualiza ao carregar página
     atualizarTitulo();
+
     document.getElementById('carregarBtn')
         .addEventListener('click', function () {
             carregarDadosAPI();
@@ -638,7 +735,11 @@
 
 
     document.getElementById('salvarBtn').addEventListener('click', function () {
-        fecharMes()
+        fecharMes('fechado')
+    });
+
+    document.getElementById('salvarParcialmenteBtn').addEventListener('click', function () {
+        fecharMes('parcial')
     });
 
     // Expor para debug
@@ -646,6 +747,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         popularMesAno();
         carregarDadosAPI();
+        escondeElementos();
     });
 
 
