@@ -22,7 +22,7 @@
 <body>
     <div class="dashboard">
 
-        <!-- 🔹 1️⃣ Filtro Superior (Tema roxo) -->
+        
         <div class="filters-card">
             <div class="filters-group">
                 <div class="filter-item">
@@ -55,23 +55,20 @@
             <span class="badge-sector" id="setorBadge"><i class="fas fa-stethoscope"></i> Setor: Fisioterapeutas</span>
         </div>
  
-<!-- HTML com classes específicas (modificado) -->
+ 
         <div class="side-panel">
-            <!-- BLOCO A – DIAS -->
+           
             <div class="resumo-card card-dias">
                 <h3><i class="fas fa-calendar-check"></i> DIAS</h3>
                 <div class="metric-item"><span class="metric-label">Previstos:</span><span class="metric-value" id="diasPrevistosValor">0 (100%)</span></div>
                 <div class="metric-item"><span class="metric-label">Cumpridos:</span><span class="metric-value" id="diasCumpridosValor">0 <span class="badge-percent" id="diasCumpridosPercent">0%</span></span></div>
             </div>
-            
-            <!-- BLOCO B – HORAS -->
             <div class="resumo-card card-horas">
                 <h3><i class="fas fa-hourglass-half"></i> HORAS</h3>
                 <div class="metric-item"><span class="metric-label">Previstas (100%):</span><span class="metric-value" id="horasPrevistasValor">00:00</span></div>
                 <div class="metric-item"><span class="metric-label">Trabalhadas:</span><span class="metric-value" id="horasTrabalhadasValor">00:00 <span class="badge-percent" id="horasPercent">0%</span></span></div>
             </div>
-            
-            <!-- BLOCO C – Distribuição + Gráfico -->
+ 
             <div class="resumo-card card-distribuicao">
                 <h3><i class="fas fa-chart-pie"></i> DISTRIBUIÇÃO</h3>
                 <div class="distrib-list" id="distribuicaoList">
@@ -81,14 +78,12 @@
                     <div class="distrib-item"><span>Coordenação</span> <span><strong id="distribCoord">00:00</strong> <span class="porcentagem" id="percCoord">0%</span></span></div>
                     <div class="distrib-item"><span>Burocrático</span> <span><strong id="distribBuro">00:00</strong> <span class="porcentagem" id="percBuro">0%</span></span></div>
                 </div>
-                <!-- Gráfico de pizza -->
-                <div class="chart-container">
+                 <div class="chart-container">
                     <canvas id="horasChart" style="width:100%; height:160px;"></canvas>
                 </div>
             </div>
             
-            <!-- BLOCO D – Prontuários + razão -->
-            <div class="resumo-card card-prontuarios">
+             <div class="resumo-card card-prontuarios">
                 <h3><i class="fas fa-file-medical"></i> PRONTUÁRIOS</h3>
                 <div class="metric-item"><span class="metric-label">Total prontuários:</span><span class="metric-value" id="prontuariosTotal">0</span></div>
                 <div class="metric-item"><span class="metric-label">Horas de prontuário:</span><span class="metric-value" id="prontuariosHoras">00:00</span></div>
@@ -99,15 +94,13 @@
                 </div>
             </div>
             
-            <!-- BLOCO E – Indicadores automáticos -->
-            <div class="resumo-card card-indicadores">
+             <div class="resumo-card card-indicadores">
                 <h3><i class="fas fa-chart-line"></i> INDICADORES</h3>
                 <div class="metric-item"><span class="metric-label">Total avaliações:</span><span class="metric-value" id="totalAvaliacoesInd">0</span></div>
                 <div class="metric-item"><span class="metric-label">Total evoluções:</span><span class="metric-value" id="totalEvolucoesInd">0</span></div>
             </div>
             
-            <!-- BLOCO F – Saldo Final -->
-            <div class="resumo-card card-saldo">
+             <div class="resumo-card card-saldo">
                 <h3 style="color: var(--roxoPrincipal-hover2);"><i class="fas fa-flag-checkered"></i> SALDO FINAL</h3>
                 <div style="display: flex; justify-content: space-between; align-items: baseline;">
                     <span style="font-size: 1.3rem; font-weight: 900;" id="saldoFinalValor">00:00</span>
@@ -116,10 +109,9 @@
                 <div style="font-size:0.8rem; color: var(--roxoPrincipal-hover2); margin-top: 4px;">Horas trabalhadas – Previstas</div>
             </div>
         </div>
-        <!-- Grid principal: tabela TRANSPOSTA com 30 DIAS + painel -->
+     
         <div class="main-grid">
-            <!-- 🔹 2️⃣ TABELA MENSAL - DIAS EM LINHA / DADOS EM COLUNA (30 DIAS COMPLETOS) -->
-            <div class="table-section">
+             <div class="table-section">
                 <div class="table-header-title">
                     <i class="fas fa-clipboard-list" style="font-size: 1.2rem;"></i>
                     <span style="font-weight: 700; font-size: 0.95rem; color: var(--roxoPrincipal-hover2);" id="tituloRelatorio">Fevereiro 2025 · Dra. Carla Mendes</span>
@@ -146,8 +138,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbodyDias">
-                        <!-- Os 30 dias serão gerados via JavaScript -->
-                    </tbody>
+                     </tbody>
                     <tfoot>
                         <tr class="total-row" id="rowTotalMensal">
                             <td class="row-day-label" style="background:#e6d3ee;"><strong>TOTAL MÊS</strong></td>
@@ -171,7 +162,7 @@
                 <div class="info-hint"><i class="fas fa-info-circle"></i> Campos editáveis: horas previstas, prontuário, coordenação, burocrático. Os cálculos são automáticos.</div>
             </div>
 
-            <!-- 🔹 3️⃣ PAINEL LATERAL – RESUMO GERAL (ATUALIZADO DINAMICAMENTE) -->
+ 
  
         </div>
     </div>
