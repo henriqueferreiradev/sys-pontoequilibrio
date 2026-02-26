@@ -12,12 +12,21 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
+from django.http import JsonResponse
+from calendar import monthrange
+from django.db.models import Q
+
+from datetime import datetime, date
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
+@login_required(login_url='login')
 def dashboard(request):
  
     return render(request, 'core/administrativo/dashboard_adm.html', {
   
     })
-
+@login_required(login_url='login')
 def notas_fiscais_views(request):
 
     
@@ -113,7 +122,7 @@ def notas_fiscais_views(request):
     return render(request, 'core/administrativo/notas_fiscais.html', context)
 
  
-
+@login_required(login_url='login')
 def salvar_notafiscal(request):
     try:
         if request.method == 'POST' and request.content_type == 'application/json':
@@ -148,7 +157,8 @@ def salvar_notafiscal(request):
             {'success': False, 'error': str(e)},
             status=500
         )
-        
+
+@login_required(login_url='login')
 def cancelar_notafiscal(request):
     try:
         if request.method == 'POST' and request.content_type == 'application/json':
@@ -181,7 +191,7 @@ def cancelar_notafiscal(request):
             status=500
         )
         
-
+@login_required(login_url='login')
 def api_detalhes_notafiscal_por_pendencia(request, pendencia_id):
     try:
         pendencia = NotaFiscalPendente.objects.select_related('nota_emitida').get(id=pendencia_id)
@@ -211,7 +221,7 @@ def api_detalhes_notafiscal_por_pendencia(request, pendencia_id):
     except NotaFiscalPendente.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Pendência não encontrada'}, status=404)
 
-
+@login_required(login_url='login')
 def documentos_clinica_views(request):
     hoje = timezone.now().date()
     limite = hoje +timedelta(days=20)
@@ -231,7 +241,7 @@ def documentos_clinica_views(request):
         
     }
     return render(request, 'core/administrativo/documentos.html', context)
-
+@login_required(login_url='login')
 def salvar_documento_empresa(request):
     try:
         if request.method == 'POST':
@@ -267,35 +277,7 @@ def salvar_documento_empresa(request):
             status=500
         )
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+ 
 def produtividade_views(request):
     profissionais = Profissional.objects.filter(ativo=True)
 
@@ -350,12 +332,7 @@ def definir_tipo_dia(profissional, ano, mes, dia):
         return 'previsto'
     else:
         return 'nao_previsto'
-
-from django.http import JsonResponse
-from calendar import monthrange
-
-from django.shortcuts import get_object_or_404
-
+ 
 def carregar_produtividade(request):
 
     profissional_id = request.GET.get('profissional')
@@ -445,11 +422,7 @@ def carregar_produtividade(request):
     else:
         return JsonResponse(montar_json_dinamico(relatorio, dias))
 
-from django.db.models import Q
-
-from datetime import datetime, date
-from django.db.models import Q
-
+ 
 def calcular_dados_automaticos_por_dia(profissional, ano, mes, dia):
 
     data_ref = date(ano, mes, dia)
@@ -507,7 +480,7 @@ def calcular_dados_automaticos_por_dia(profissional, ano, mes, dia):
         "prontuarios": prontuarios
     }
 
-
+@login_required(login_url='login')
 def fechar_mes(relatorio):
 
     if relatorio.status == 'fechado':
@@ -587,9 +560,7 @@ def fechar_mes(relatorio):
     relatorio.fechado_em = timezone.now()
     relatorio.save()
 
-
-
-from datetime import date
+@login_required(login_url='login')
 def montar_json_dinamico(relatorio, dias):
 
     response_dias = []
@@ -680,6 +651,7 @@ def montar_json_dinamico(relatorio, dias):
             "razao_prontuario": razao
         }
     }
+@login_required(login_url='login')
 def montar_json_snapshot(relatorio, dias):
 
     response_dias = []
@@ -724,8 +696,9 @@ def montar_json_snapshot(relatorio, dias):
     }
 
 
-@login_required
+ 
 @require_POST
+@login_required(login_url='login')
 def fechar_produtividade(request):
     data = json.loads(request.body)
     profissional_id = data.get("profissional")
@@ -748,8 +721,8 @@ def fechar_produtividade(request):
     return JsonResponse({"ok": True})
 
 
-@login_required
 @require_POST
+@login_required(login_url='login')
 def salvar_produtividade(request):
     try:
         payload = json.loads(request.body)

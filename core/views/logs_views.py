@@ -5,8 +5,7 @@ from core.models import LogAcao
 from django.db.models import F
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-@login_required
-@login_required
+@login_required(login_url='login')
 def logs_view(request):
     if not request.user.is_superuser and request.user.tipo != 'admin':
         return HttpResponseForbidden("Acesso negado.")

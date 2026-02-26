@@ -26,7 +26,7 @@ def calcular_idade(data_nascimento):
     if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
         idade -= 1
     return idade
-
+@login_required(login_url='login')
 def pacientes_view(request):
     if request.method == 'POST':
         pac_id = request.POST.get('delete_id') or request.POST.get('inativar_id')

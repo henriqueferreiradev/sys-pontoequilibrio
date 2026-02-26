@@ -19,7 +19,7 @@ def login_view(request):
                 return redirect('agenda_profissional')  # troque pelo nome real da sua rota
 
             # Redirecionamento padrão
-            return redirect(next_url or 'dashboard')
+            return redirect('dashboard')
 
         else:
             messages.error(request, "Usuário ou senha inválidos.")
