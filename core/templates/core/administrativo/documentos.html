@@ -15,9 +15,8 @@
 {% block content %}
 
     <main class="content">
-                    <button class="btn-primary" id="openModalBtn">
-                <i class="fas fa-plus"></i> Enviar Documento
-            </button>
+    {% include "core/partials/filtros/filtro_documentos.html" %}
+
         <div class="docs-info">
             <div class="info-card">
                 <h3>Total de Documentos</h3>
@@ -100,6 +99,7 @@
                 </tbody>
             </table>
         </div>
+        {% include "core/partials/_paginacao.html" %}
     </main>
 
     <!-- Modal para envio de documentos -->
@@ -163,5 +163,6 @@
 
 {% block scripts %}
 <script src="{% static '/core/js/administrativo/docBase.js' %}"></script>
- 
+<script src="{% static '/core/js/base/abrirFiltro.js' %}"></script>
+
 {% endblock %}

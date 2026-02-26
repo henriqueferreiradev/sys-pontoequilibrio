@@ -106,8 +106,8 @@ body {
 }
 
 .btn-primary {
-    background: var(--roxoPrincialGradient);
-    color: var(--branco);
+    background: white;
+    color: var(--roxoPrincipal);
     border: none;
     padding: 12px 24px;
     border-radius: var(--borda-radius);
@@ -120,7 +120,7 @@ body {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(to right, var(--roxoPrincipal-hover2), var(--roxo-primary-hover));
+    background: whitesmoke;
     transform: translateY(-2px);
     box-shadow: var(--sombra-destaque);
 }
