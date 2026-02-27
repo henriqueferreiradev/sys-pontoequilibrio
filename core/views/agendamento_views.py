@@ -872,14 +872,16 @@ def criar_agendamento(request):
 
     # Caso seja uma chamada da API (como /api/agendamentos/), retorna JSON
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        vencimento = receita.vencimento.strftime('%Y-%m-%d') if receita else None
+        status_receita = receita.status if receita else None
         return JsonResponse({
             'success': True,
             'message': 'Agendamento criado com sucesso!',
             'paciente': paciente.nome,
             'servico': servico.nome,
             'agendamentos_criados': len(agendamentos_criados),
-            'vencimento': str(receita.vencimento),
-            'status_receita': receita.status,
+            'vencimento': vencimento,
+            'status_receita': status_receita,
             'redirect_url': reverse(
                 'confirmacao_agendamento',
                 kwargs={'agendamento_id': ultimo_agendamento.id}
