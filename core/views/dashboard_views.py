@@ -8,6 +8,7 @@ import json
 import locale
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
+from django.core.paginator import Paginator
 import random
 
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
@@ -299,7 +300,9 @@ def dashboard_view(request):
             'borderRadius':10,
         }]
     }
-    
+    paginator = Paginator(agendamentos, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
         'agendamentos':agendamentos,
         'faltas_dia': faltas_dia,
@@ -321,6 +324,7 @@ def dashboard_view(request):
         'variacao_sessao':variacao_sessao,
         'variacao_finalizadas':variacao_finalizadas,
         'variacao_pendentes': variacao_pendentes,
+        'page_obj': page_obj,
 
     }
     return render(request, 'core/dashboard.html', context)

@@ -144,7 +144,7 @@
       </thead>
       <tbody>
         {% if agendamentos %}
-          {% for agendamento in agendamentos %}
+          {% for agendamento in page_obj %}
             <tr>
               <td style="width: 5px; background-color: {{ agendamento.especialidade.cor }};"></td>
               <td>{{ agendamento.hora_inicio }} - {{ agendamento.hora_fim }}</td>
@@ -212,6 +212,7 @@
       </tbody>
       
     </table>
+    {% include 'core/partials/_paginacao.html' %}
   </div>
 
 <!-- Second Row of Quick Stats
