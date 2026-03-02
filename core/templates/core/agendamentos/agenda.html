@@ -159,21 +159,23 @@
     </div>
 </div>
 
-<div class="sidebar" id="sidebar">
-    <div class="header-sidebar">
-        <h2>Agendamento</h2>
-        <button id="closeBtn">&times;</button>
-    </div>
-    
-    <div class="agendamento_div">
-        <div class="form-content">
+<!-- MODAL DE AGENDAMENTO REFATORADO -->
+<div class="modal-overlay" id="modalAgendamento">
+    <div class="modal modal-agendamento">
+        
+        <div class="modal-header">
+            <div class="modal-title">
+                <h2>Agendamento</h2>
+            </div>
+            <button class="modal-close" id="closeBtnAgendamento">&times;</button>
+        </div>
+
+        <div class="modal-body">
             <form id="agendamentoForm" method="post" action="{% url 'criar_agendamento' %}" novalidate>
                 {% csrf_token %}
 
                 <div id="aviso-pacote" class="aviso-premium aviso-c-pac" style="display: none;">
-
                     <div class="aviso-content">
-                        
                         <span id="mensagem-pacote"></span>
                         <button type="button" id="usar-pacote-btn" class="btn-premium">
                             <i class="fas fa-tag"></i> Usar este pacote
@@ -189,9 +191,9 @@
                 <div  id="pacote_atual"></div>
                 <div  id="info_reposicao"></div>
                 <div  id="sem_pacote"></div>
+                
                 <div id="aviso-desmarcacoes" class="aviso-premium" style="display: none;">
- 
-                        <div class="aviso-content">
+                    <div class="aviso-content">
                         <span id="mensagem-desmarcacoes"></span>
                         <button type="button" id="usar-reposicao-btn" class="btn-premium">
                             <i class="fas fa-calendar-plus"></i> Remarcar sessão
@@ -267,6 +269,7 @@
                         <option value="beneficio_sessao_aniversario" class="servico-beneficio" data-valor="0.00" hidden>Sessão Relaxante de aniversário (Aniversário)</option>
                     </select>
                 </div>
+                
                 <div class="formRow cols-2">
                     <div class="formField">
                         <label for="especialidadeInput"><i class="fas fa-stethoscope"></i> Especialidade</label>
@@ -442,6 +445,7 @@
                         <input type="hidden" id="valor_pago_atual" name="valor_pago_atual" value="0.00">
                     </div>
                 </div>
+                
                 <div id="info_pacote" class="hidden">
                     <table class="tabela-premium">
                         <tbody>
@@ -464,6 +468,7 @@
                         </tbody>
                     </table>
                 </div>
+                
                 <div class="formRow cols-2" id='receb_sect'>
                     <div class="formField">
                         <label for="valor_pago_input"><i class="fas fa-money-bill-wave"></i> Valor pago</label>
@@ -510,22 +515,23 @@
                         </select>
                     </div>
                 </div>
+                
                 <div class="formField">
                     <label for="observacoes_textarea"><i class="fas fa-sticky-note"></i>Observações</label>
                     <textarea class="textarea-large input-s" name="observacoes" id="observacoes_textarea"></textarea>
                 </div>
 
-
             </form>
         </div>
-        <div class="footer">
-                <button class="btn-footer" type="submit" form="agendamentoForm">Agendar</button>
-                 
+
+        <div class="modal-footer">
+            <button class="btn-footer" type="submit" form="agendamentoForm">Agendar</button>
         </div>
+
     </div>
 </div>
 
-<div class="modal-overlay" id="modalRegistroTempo">
+<div class="modal-overlay"id="modalRegistroTempo">
   
   <div class="modal"> <!-- container do modal -->
 

@@ -524,6 +524,7 @@ select.input-field {
     .tabs {
         flex-direction: row;
         gap: var(--espaco-xs);
+        flex-wrap: wrap;
     }
 
     .tab {
@@ -539,9 +540,7 @@ select.input-field {
         transform: none;
     }
 
-    .form {
-        padding: var(--espaco-md);
-    }
+ 
 
     .form-grid {
         grid-template-columns: 1fr;

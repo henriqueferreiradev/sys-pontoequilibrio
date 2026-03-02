@@ -183,7 +183,7 @@ if (formCriarAgendamento) {
 // FUNÇÕES UTILITÁRIAS
 
 function limparTudo() {
-    console.log('Limpando tudo...');
+   
 
     // 1. Limpar campo de busca e sugestões
     const buscaInput = document.getElementById('busca');
@@ -304,11 +304,11 @@ function limparTudo() {
     // 19. Limpar dados globais
     window.saldosDesmarcacoes = null;
 
-    console.log('Limpeza completa!');
+    
 }
 // Função para limpar apenas os avisos
 function limparAvisos() {
-    console.log('Limpando avisos...');
+  
 
     // 1. Limpar avisos de pacote
     const avisoPacote = document.getElementById('aviso-pacote');
@@ -353,7 +353,7 @@ function limparAvisos() {
         usarRemarcacaoBtn.onclick = null;
     }
 
-    console.log('Avisos limpos!');
+  
 }
 
 // Função para mostrar mensagem no div sem_pacote
@@ -900,33 +900,7 @@ function limparOpcaoPacoteServico() {
 
 }
 
-// =============================================
-// FUNÇÕES DE INTERFACE E INTERATIVIDADE
-// =============================================
-function configurarSidebar() {
-    const openBtn = document.getElementById('openBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const sidebar = document.getElementById('sidebar');
-
-    if (openBtn && sidebar) {
-        openBtn.addEventListener('click', () => {
-            sidebar.removeAttribute('hidden');
-            sidebar.classList.add('active');
-            document.body.classList.add('modal-open');
-        });
-    }
-
-    if (closeBtn && sidebar) {
-        closeBtn.addEventListener('click', () => {
-            limparTudo()
-            sidebar.classList.remove('active');
-            sidebar.setAttribute('hidden', '');
-
-
-            document.body.classList.remove('modal-open');
-        });
-    }
-}
+ 
 function configurarModalRegistroTempo() {
     const openBtn = document.getElementById('openBtnTimeRegister');
     const closeBtn = document.getElementById('closeBtnRegistroTempo');
@@ -961,7 +935,62 @@ function configurarModalRegistroTempo() {
         document.body.classList.remove('modal-open');
     }
 }
+function configurarModalAgendamento() {
+    const openBtn = document.getElementById('openBtn'); // botão que abre
+    const closeBtn = document.getElementById('closeBtnAgendamento');
+    const modal = document.getElementById('modalAgendamento');
 
+    if (!modal) return;
+
+    // Abrir
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            controlarModal(modal, 'abrir');
+        });
+    }
+
+    // Fechar botão X
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            limparTudo();
+            controlarModal(modal, 'fechar');
+        });
+    }
+
+    // Fechar clicando no overlay
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            limparTudo();
+            controlarModal(modal, 'fechar');
+        }
+    });
+}
+
+function controlarModal(modal, acao) {
+    if (!modal) return;
+    
+    if (acao === 'abrir') {
+        modal.classList.add('active');
+        modal.removeAttribute('hidden');
+        document.body.classList.add('modal-open');
+        
+        // Se for a sidebar, também ativa o overlay
+        if (modal.id === 'sidebar') {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) overlay.classList.add('active');
+        }
+    } else {
+        modal.classList.remove('active');
+        modal.setAttribute('hidden', '');
+        document.body.classList.remove('modal-open');
+        
+        // Se for a sidebar, também desativa o overlay
+        if (modal.id === 'sidebar') {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
+}
 function salvarRegistroTempo() {
     const form = document.getElementById('registroTempoForm');
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
@@ -1340,7 +1369,8 @@ function configurarFormularioEdicao() {
 // INICIALIZAÇÃO PRINCIPAL
 // =============================================
 document.addEventListener("DOMContentLoaded", async function () {
-    configurarSidebar();
+    configurarModalAgendamento();
+     
     configurarModalRegistroTempo();
     configurarSubmenus();
     configurarAutocompletePacientes();

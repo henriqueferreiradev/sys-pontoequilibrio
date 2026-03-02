@@ -757,7 +757,7 @@ textarea {
 .message-item {
   display: flex;
   padding: 18px 20px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--cinzaBorda);
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 16px;
