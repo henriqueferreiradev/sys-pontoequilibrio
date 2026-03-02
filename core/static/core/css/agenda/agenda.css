@@ -1,19 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--fontePrincipal);
-}
-
-body {
-    background-color: var(--bg-color);
-    display: flex;
-    min-height: 100vh;
-    margin: 0;
-    overflow: hidden;
-}
 
 
 
@@ -862,11 +848,17 @@ select.input-s {
 .formRow {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: var(--espaco-md);
     --gap: var(--espaco-md);
     --cols: 3;
 
 }
+
+.formActions {
+    text-align: right;
+}
+
 
 .formRow.cols-1 {
     --cols: 1;
@@ -973,6 +965,7 @@ select.input-s {
 
 .checkbox-option {
     padding: 0;
+    margin-bottom: 1em;
 
 }
 
@@ -1194,9 +1187,7 @@ textarea.error {
     display: none;
 }
 
-.active {
-    display: block;
-}
+
 
 .modal-open {
     overflow: hidden;
@@ -1710,7 +1701,7 @@ button[type="submit"]:disabled:hover {
     background-color: var(--branco);
     border-radius: var(--borda-arredondada);
     width: 90%;
-    max-width: 600px;
+    max-width: fit-content;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: var(--sombra-destaque);
@@ -2008,4 +1999,10 @@ button[type="submit"]:disabled:hover {
 
 .agenda-item.agenda-bloqueada::before {
     background-color: #292929;
+}
+
+.modal-content {
+    width: 100%;
+    padding: 1em;
+    max-width: fit-content;
 }

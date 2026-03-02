@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.template.context_processors import request
 import json
-from core.models import Agendamento, AvaliacaoFisioterapeutica, ConfigAgenda, DocumentoClinica, EscalaBaseProfissional, Evolucao, NotaFiscalCancelada, NotaFiscalEmitida, NotaFiscalPendente, ProdutividadeDia, ProdutividadeMensal, Profissional, Prontuario, TipoDocumentoEmpresa
+from core.models import Agendamento, AvaliacaoFisioterapeutica, ConfigAgenda, DocumentoClinica, EscalaBaseProfissional, Evolucao, NotaFiscalCancelada, NotaFiscalEmitida, NotaFiscalPendente, ProdutividadeDia, ProdutividadeMensal, Profissional, Prontuario, TempoRegistroClinico, TipoDocumentoEmpresa
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -471,16 +471,39 @@ def calcular_dados_automaticos_por_dia(profissional, ano, mes, dia):
         data_criacao__date=data_ref
     ).count()
 
+    registros = TempoRegistroClinico.objects.filter(
+        profissional=profissional,
+        data=data_ref
+    )
+
+    prontuario_min = 0
+    coord_min = 0
+    buro_min = 0
+
+    for r in registros:
+        if r.hora_inicio and r.hora_fim:
+            inicio = datetime.combine(data_ref, r.hora_inicio)
+            fim = datetime.combine(data_ref, r.hora_fim)
+            duracao = int((fim - inicio).total_seconds() // 60)
+
+            if r.tipo_registro == "prontuario":
+                prontuario_min += duracao
+            elif r.tipo_registro == "coordenacao":
+                coord_min += duracao
+            elif r.tipo_registro == "burocracia":
+                buro_min += duracao
 
     return {
         "individual_min": individual,
         "conjunto_min": conjunto,
         "avaliacoes": avaliacoes,
         "evolucoes": evolucoes,
-        "prontuarios": prontuarios
+        "prontuarios": prontuarios,
+        "prontuario_min": prontuario_min,
+        "coord_min": coord_min,
+        "buro_min": buro_min,
     }
 
-@login_required(login_url='login')
 def fechar_mes(relatorio):
 
     if relatorio.status == 'fechado':
@@ -509,9 +532,9 @@ def fechar_mes(relatorio):
         total_dia = (
             auto['individual_min'] +
             auto['conjunto_min'] +
-            dia.horas_prontuario_min +
-            dia.horas_coord_min +
-            dia.horas_buro_min
+            auto['prontuario_min'] +
+            auto['coord_min'] +
+            auto['buro_min']
         )
 
         saldo = total_dia - dia.horas_previstas_min
@@ -529,9 +552,9 @@ def fechar_mes(relatorio):
         total_trabalhadas += total_dia
         total_individual += auto['individual_min']
         total_conjunto += auto['conjunto_min']
-        total_prontuario += dia.horas_prontuario_min
-        total_coord += dia.horas_coord_min
-        total_buro += dia.horas_buro_min
+        total_prontuario += auto['prontuario_min']
+        total_coord += auto['coord_min']
+        total_buro += auto['buro_min']
         total_avaliacoes += auto['avaliacoes']
         total_evolucoes += auto['evolucoes']
         total_prontuarios_qtd += auto['prontuarios']
@@ -560,7 +583,6 @@ def fechar_mes(relatorio):
     relatorio.fechado_em = timezone.now()
     relatorio.save()
 
-@login_required(login_url='login')
 def montar_json_dinamico(relatorio, dias):
 
     response_dias = []
@@ -588,9 +610,9 @@ def montar_json_dinamico(relatorio, dias):
         total_dia = (
             auto['individual_min'] +
             auto['conjunto_min'] +
-            d.horas_prontuario_min +
-            d.horas_coord_min +
-            d.horas_buro_min
+            auto['prontuario_min'] +
+            auto['coord_min'] +
+            auto['buro_min']
         )
 
         saldo = total_dia - d.horas_previstas_min
@@ -605,9 +627,9 @@ def montar_json_dinamico(relatorio, dias):
             "avaliacoes": auto['avaliacoes'],
             "evolucoes": auto['evolucoes'],
             "prontuarios": auto['prontuarios'],
-            "horas_prontuario_min": d.horas_prontuario_min,
-            "horas_coord_min": d.horas_coord_min,
-            "horas_buro_min": d.horas_buro_min,
+            "horas_prontuario_min": auto['prontuario_min'],
+            "horas_coord_min": auto['coord_min'],
+            "horas_buro_min": auto['buro_min'],
             "total_trabalhado_min": total_dia,
             "saldo_min": saldo,
         })
@@ -616,9 +638,9 @@ def montar_json_dinamico(relatorio, dias):
         total_trabalhadas += total_dia
         total_individual += auto['individual_min']
         total_conjunto += auto['conjunto_min']
-        total_prontuario += d.horas_prontuario_min
-        total_coord += d.horas_coord_min
-        total_buro += d.horas_buro_min
+        total_prontuario += auto['prontuario_min']
+        total_coord += auto['coord_min']
+        total_buro += auto['buro_min']
         total_avaliacoes += auto['avaliacoes']
         total_evolucoes += auto['evolucoes']
         total_prontuarios_qtd += auto['prontuarios']
@@ -651,7 +673,6 @@ def montar_json_dinamico(relatorio, dias):
             "razao_prontuario": razao
         }
     }
-@login_required(login_url='login')
 def montar_json_snapshot(relatorio, dias):
 
     response_dias = []
@@ -698,7 +719,6 @@ def montar_json_snapshot(relatorio, dias):
 
  
 @require_POST
-@login_required(login_url='login')
 def fechar_produtividade(request):
     data = json.loads(request.body)
     profissional_id = data.get("profissional")
@@ -722,7 +742,6 @@ def fechar_produtividade(request):
 
 
 @require_POST
-@login_required(login_url='login')
 def salvar_produtividade(request):
     try:
         payload = json.loads(request.body)

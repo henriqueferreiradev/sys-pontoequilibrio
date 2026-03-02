@@ -449,7 +449,7 @@ async function verificarPacoteAtivo() {
                 }
 
                 servicoSelect.value = "";
-                if (tipoSessaoLabel) tipoSessaoLabel.textContent = 'Tipo de reposição';
+                if (tipoSessaoLabel) tipoSessaoLabel.innerHTML = '<i class="fas fa-rotate-left"></i> Tipo de reposição';
                 if (infoReposicao) {
                     infoReposicao.innerHTML = `<strong>Reposição de sessão</strong>`;
                     infoReposicao.style.display = 'block';
@@ -658,7 +658,12 @@ async function verificarPacoteAtivo() {
 
         // Configurar botão de reposição
         if (usarRemarcacaoBtn) {
-            usarRemarcacaoBtn.onclick = () => configurarReposicao();
+            usarRemarcacaoBtn.onclick = () => {
+
+                configurarReposicao();
+                ocultarPagamentoERecorrencia();
+            };
+
         }
     } catch (error) {
         console.error('Erro ao verificar pacote:', error);
@@ -875,7 +880,7 @@ function configurarReposicao() {
 
     if (avisoDiv) avisoDiv.style.display = 'none';
     if (avisoDesmarcacoes) avisoDesmarcacoes.style.display = 'none';
-    if (tipoSessaoLabel) tipoSessaoLabel.textContent = 'Tipo de reposição';
+    if (tipoSessaoLabel) tipoSessaoLabel.innerHTML = '<i class="fas fa-rotate-left"></i>Tipo de reposição';
 }
 
 function limparOpcaoPacoteServico() {
@@ -922,7 +927,71 @@ function configurarSidebar() {
         });
     }
 }
+function configurarModalRegistroTempo() {
+    const openBtn = document.getElementById('openBtnTimeRegister');
+    const closeBtn = document.getElementById('closeBtnRegistroTempo');
+    const modal = document.getElementById('modalRegistroTempo');
 
+    if (!modal) return;
+
+    // Abrir
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            modal.hidden = false;
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+        });
+    }
+
+    // Fechar botão X
+    if (closeBtn) {
+        closeBtn.addEventListener('click', fecharModal);
+    }
+
+    // Fechar clicando fora
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            fecharModal();
+        }
+    });
+
+    function fecharModal() {
+        modal.classList.remove('active');
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+    }
+}
+
+function salvarRegistroTempo() {
+    const form = document.getElementById('registroTempoForm');
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    const formData = new FormData(form);
+
+    fetch('/salvar-registro-tempo/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+        },
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Registro salvo com sucesso!");
+                form.reset();
+                fecharModalRegistroTempo();
+            } else {
+                alert("Erro ao salvar: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Erro:", error);
+        });
+}
+
+
+document.addEventListener('DOMContentLoaded', configurarModalRegistroTempo);
 function configurarSubmenus() {
     document.querySelectorAll('.submenu-header').forEach(header => {
         header.addEventListener('click', function () {
@@ -1272,6 +1341,7 @@ function configurarFormularioEdicao() {
 // =============================================
 document.addEventListener("DOMContentLoaded", async function () {
     configurarSidebar();
+    configurarModalRegistroTempo();
     configurarSubmenus();
     configurarAutocompletePacientes();
     configurarSelecaoServico();
@@ -1284,6 +1354,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         await verificarPacoteAtivo();
         await verificarBeneficiosAtivos(pacienteIdInput.value); // <-- corrige aqui
     }
+
+    const form = document.getElementById('registroTempoForm');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        salvarRegistroTempo();
+    });
 });
 
 // =============================================

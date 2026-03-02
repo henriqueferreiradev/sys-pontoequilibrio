@@ -66,8 +66,8 @@ urlpatterns = [
     path('agenda/lembrete/',agendamento_views.lembrete_agendamento_dia_seguinte, name='lembrete_agenda'),
     path('api/listar-lembretes-agendamentos/', agendamento_views.listar_lembretes_agendamento),
     path('api/enviar-lembrete/<int:agendamento_id>/', agendamento_views.enviar_lembrete_agenda, name='enviar_lembrete_agenda'),
-        path('api/produtividade/', administrativo_views.carregar_produtividade, name='carregar_produtividade'),
-path("api/produtividade/fechar/", administrativo_views.fechar_produtividade, name="fechar_produtividade"),
+    path('api/produtividade/', administrativo_views.carregar_produtividade, name='carregar_produtividade'),
+    path("api/produtividade/fechar/", administrativo_views.fechar_produtividade, name="fechar_produtividade"),
     path("api/produtividade/salvar/", administrativo_views.salvar_produtividade, name="salvar_produtividade"),
     path('api/detalhe-nf-emitida/pendencia/<int:pendencia_id>/', administrativo_views.api_detalhes_notafiscal_por_pendencia),
     #RECEITAS    
@@ -76,6 +76,8 @@ path("api/produtividade/fechar/", administrativo_views.fechar_produtividade, nam
     path('receita/<int:receita_id>/registrar-pagamento/', api_views.api_registrar_pagamento, name='registrar_pagamento'),
     path('receita/criar-receita-manual/', api_views.criar_receita_manual, name='criar_receita_manual'),
     
+    path('salvar-registro-tempo/', agendamento_views.salvar_registro_tempo, name='salvar_registro_tempo'),
+
     #DESPESAS
     
     

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from core.services.financeiro import criar_receita_pacote
 from core.utils import gerar_mensagem_confirmacao, enviar_lembrete_email, registrar_log, proximo_dia_util
-from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, ConfigAgenda, ESTADO_CIVIL, Especialidade, MIDIA_ESCOLHA, LembreteAgenda, Paciente, PacotePaciente, Pagamento, Profissional, Receita, SEXO_ESCOLHA, STATUS_CHOICES, Servico, UF_ESCOLHA, VINCULO
+from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, ConfigAgenda,REGISTROS ,Especialidade, MIDIA_ESCOLHA, LembreteAgenda, Paciente, PacotePaciente, Pagamento, Profissional, Receita, SEXO_ESCOLHA, STATUS_CHOICES, Servico, UF_ESCOLHA, VINCULO, TempoRegistroClinico
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from collections import defaultdict
@@ -24,6 +24,10 @@ from django.template.context_processors import request
 from django.db import transaction
 import unicodedata
 
+
+from django.http import JsonResponse
+from datetime import datetime
+from core.models import EscalaBaseProfissional
 
 
 @login_required(login_url='login')
@@ -53,7 +57,7 @@ def agenda_view(request):
     especialidades = Especialidade.objects.filter(ativo=True)
     profissionais = Profissional.objects.filter(ativo=True)
     servicos = Servico.objects.filter(ativo=True)
-
+    registros = REGISTROS
 
 
     status_remarcaveis = ['d','dcr', 'fcr']
@@ -65,6 +69,7 @@ def agenda_view(request):
         'query': query,
         'agendamentos':agendamentos,
         'status_remarcaveis': status_remarcaveis,
+        'registros': registros,
     }
 
     return render(request, 'core/agendamentos/agenda.html', context)
@@ -190,19 +195,35 @@ def agenda_board(request):
     })
 
 
+def salvar_registro_tempo(request):
+    try:
+        profissional_id = request.POST.get('profissional_id')
+        tipo_registro = request.POST.get('tipo_registro')
+        hora_inicio = request.POST.get('hora_inicio')
+        hora_fim = request.POST.get('hora_fim')
 
-from django.http import JsonResponse
-from datetime import datetime
-from core.models import EscalaBaseProfissional
+        profissional = Profissional.objects.get(id=profissional_id)
+
+
+        print(profissional_id, tipo_registro, hora_inicio, hora_fim)
+        TempoRegistroClinico.objects.create(
+            profissional=profissional,
+            tipo_registro=tipo_registro,
+            data=timezone.localdate(),
+            hora_inicio=hora_inicio,
+            hora_fim=hora_fim,
+        )
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success':False,'error': str(e)}, status=400)
 
 def profissionais_trabalham_no_dia(request):
-    date_str = request.GET.get('date')  # YYYY-MM-DD
+    date_str = request.GET.get('date')
     if not date_str:
         return JsonResponse({'error': 'Data não informada'}, status=400)
 
     data = datetime.strptime(date_str, '%Y-%m-%d').date()
 
-    # mapear weekday -> sigla usada no banco
     mapa_dias = {
         0: 'seg',
         1: 'ter',
@@ -242,12 +263,9 @@ def get_sessoes_simultaneas(request):
     try:
         data = datetime.strptime(data_str, '%Y-%m-%d').date()
         
-        # Converter horário para objeto time
         hora_str = horario
         hora_obj = datetime.strptime(hora_str, '%H:%M').time()
         
-        # Buscar agendamentos que se sobrepõem a este horário para este profissional
-        # Lógica: agendamentos que começam antes ou no horário e terminam depois do horário
         agendamentos = Agendamento.objects.filter(
             data=data,
             profissional_1_id=profissional_id
@@ -264,20 +282,16 @@ def get_sessoes_simultaneas(request):
             horario_dentro = False
             
             if ag.hora_inicio and ag.hora_fim:
-                # Horário está entre hora_inicio (inclusive) e hora_fim (exclusive)
                 if ag.hora_inicio <= hora_obj < ag.hora_fim:
                     horario_dentro = True
             elif ag.hora_inicio and not ag.hora_fim:
-                # Se não tem hora_fim, considerar duração padrão de 1 hora
                 hora_fim_estimada = (datetime.combine(data, ag.hora_inicio) + timedelta(hours=1)).time()
                 if ag.hora_inicio <= hora_obj < hora_fim_estimada:
                     horario_dentro = True
             
             if horario_dentro:
-                # Tentar obter ambiente de forma segura
                 ambiente_nome = ''
                 try:
-                    # Se ambiente for CharField ou TextField
                     if hasattr(ag, 'ambiente') and ag.ambiente:
                         ambiente_nome = str(ag.ambiente)
                     # Se for ForeignKey (remova se não existir)

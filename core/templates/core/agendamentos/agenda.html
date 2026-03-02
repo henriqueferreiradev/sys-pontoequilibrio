@@ -159,7 +159,7 @@
     </div>
 </div>
 
-<div class="sidebar" hidden id="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="header-sidebar">
         <h2>Agendamento</h2>
         <button id="closeBtn">&times;</button>
@@ -524,6 +524,71 @@
         </div>
     </div>
 </div>
+
+<div class="modal-overlay" id="modalRegistroTempo">
+  
+  <div class="modal"> <!-- container do modal -->
+
+    <div class="header-sidebar">
+      <h2>Registrar Tempo</h2>
+      <button type="button" class='modal-close' id="closeBtnRegistroTempo">&times;</button>
+    </div>
+
+    <div class="modal-content">
+        <form id="registroTempoForm">
+
+        {% csrf_token %}
+
+        <!-- PROFISSIONAL -->
+        <div class="formField">
+            <label><i class="fas fa-user"></i> Profissional</label>
+            <select name="profissional_id" id="profissionalSelect" class="input-s" required>
+            <option value="" disabled selected>Selecione um profissional</option>
+            {% for profissional in profissionais %}
+                <option value="{{ profissional.id }}">
+                {{ profissional.nome }}
+                </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <!-- TIPO REGISTRO -->
+        <div class="formField">
+            <label><i class="fas fa-list"></i> Registro</label>
+            <select name="tipo_registro" id="tipoRegistroSelect" class="input-s" required>
+            <option value="" disabled selected>Selecione um registro...</option>
+            {% for registro in registros %}
+                <option value="{{ registro.0 }}">
+                {{ registro.1 }}
+                </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <!-- HORAS -->
+        <div class="formRow cols-2">
+            <div class="formField">
+            <label><i class="fas fa-clock"></i> H. Início</label>
+            <input type="time" name="hora_inicio" id="horaInicio" class="input-s" required>
+            </div>
+
+            <div class="formField">
+            <label><i class="fas fa-clock"></i> H. Término</label>
+            <input type="time" name="hora_fim" id="horaFim" class="input-s" required>
+            </div>
+        </div>
+
+        <div class="formActions">
+            <button type="submit" class="btn-footer">Registrar Tempo</button>
+        </div>
+
+        </form>
+    </div>
+
+  </div>
+</div>
+
+
 <div class="modal-overlay" id="exConfModal">
     <div class="modal">
 

@@ -182,6 +182,11 @@ TIPO_VINCULO = [
     ('outro', 'Outro'),
 ]
 
+REGISTROS = [
+        ('prontuario','Prontuário/Evolução/Avaliação'),
+        ('burocracia','Burocracia'),
+        ('coordenacao','Coordenação'),
+    ]
 
 class User(AbstractUser):
     tipo = models.CharField(max_length=20, choices=TIPOS_USUARIO)
@@ -2084,7 +2089,13 @@ class ProdutividadeDia(models.Model):
     class Meta:
         unique_together = ('relatorio', 'dia')
 
+class TempoRegistroClinico(models.Model):
 
+    profissional = models.ForeignKey(Profissional, on_delete=models.CASCADE) 
+    tipo_registro = models.CharField(max_length=20, choices=REGISTROS)
+    data = models.DateField(auto_now_add=True)
+    hora_inicio = models.TimeField() 
+    hora_fim = models.TimeField() 
 
 def popular_plano_contas_inicial():
     """
