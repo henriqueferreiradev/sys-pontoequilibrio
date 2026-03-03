@@ -1027,7 +1027,7 @@ select.input-s {
     background-color: rgba(247, 247, 0, 0.15);
 }
 
-.status-fcr {
+.agenda-item.status-fcr {
     border: 1px solid #F7F700;
     background-color: rgba(247, 247, 0, 0.15);
 }
@@ -2040,19 +2040,7 @@ button[type="submit"]:disabled:hover {
     padding: 20px;
 }
 
-.modal-agendamento .modal-footer {
-    flex-shrink: 0;
-    padding: 16px 20px;
-    background: var(--branco);
-    border-top: 1px solid var(--cinzaBorda);
-    display: flex;
-    justify-content: flex-end;
-}
-
-.modal-agendamento .modal-footer .btn-footer {
-    min-width: 120px;
-}
-
+ 
 /* Ajustes para o conteúdo do formulário */
 .modal-agendamento .formField {
     margin-bottom: 16px;

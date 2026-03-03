@@ -661,7 +661,8 @@ async function verificarPacoteAtivo() {
             usarRemarcacaoBtn.onclick = () => {
 
                 configurarReposicao();
-                ocultarPagamentoERecorrencia();
+                ocultarPagamento();
+                ocultarRecorrencia();
             };
 
         }
@@ -823,21 +824,32 @@ function usarPacoteAtivo(pacote, sessaoAtual, sessoesDisponiveis) {
 }
 
 function atualizarInfoPacote(pacote, sessaoAtual, sessoesDisponiveis) {
+
+    const valorRestante = Number(pacote.valor_total) - Number(pacote.valor_pago);
+
     const elementos = {
         codigo: document.getElementById('codigo_pacote_display'),
         valorPago: document.getElementById('valor_pago_display'),
         valorRestante: document.getElementById('valor_restante_display'),
         sessaoAtual: document.getElementById('sessao_atual_display'),
         totalSessoes: document.getElementById('total_sessoes_display'),
-        sessoesDisponiveis: document.getElementById('sessoes_disponiveis_display') // Adicione este campo no HTML se necessário
+        sessoesDisponiveis: document.getElementById('sessoes_disponiveis_display')
     };
 
     if (elementos.codigo) elementos.codigo.textContent = pacote.codigo;
     if (elementos.valorPago) elementos.valorPago.textContent = Number(pacote.valor_pago).toFixed(2);
-    if (elementos.valorRestante) elementos.valorRestante.textContent = (pacote.valor_total - pacote.valor_pago).toFixed(2);
+    if (elementos.valorRestante) elementos.valorRestante.textContent = valorRestante.toFixed(2);
     if (elementos.sessaoAtual) elementos.sessaoAtual.textContent = sessaoAtual;
     if (elementos.totalSessoes) elementos.totalSessoes.textContent = pacote.quantidade_total;
     if (elementos.sessoesDisponiveis) elementos.sessoesDisponiveis.textContent = sessoesDisponiveis;
+
+   
+    if (valorRestante <= 0) {
+        ocultarPagamento();
+
+        const tabelaInfo = document.getElementById('info_pacote');
+        if (tabelaInfo) tabelaInfo.style.display = 'none';
+    }
 }
 
 function verificarSaldosDesmarcacoes(saldos) {
@@ -1535,12 +1547,14 @@ async function verificarBeneficiosAtivos(pacienteId) {
                 switch (tipo) {
                     case 'relaxante':
                         selecionarServicoRelaxanteETravarsValor();
-                        ocultarPagamentoERecorrencia();
+                        ocultarPagamento();
+                        ocultarRecorrencia();
                         break;
                     case 'sessao_livre':
                     case 'sessao_aniversario':
                         marcarSessaoLivre(tipo === 'sessao_aniversario' ? 'aniversario' : null);
-                        ocultarPagamentoERecorrencia();
+                        ocultarPagamento();
+                        ocultarRecorrencia();
                         break;
                     case 'desconto':
                         aplicarDescontoBloqueado(parseInt(percentual));
@@ -1570,32 +1584,39 @@ async function verificarBeneficiosAtivos(pacienteId) {
 }
 
 
-function ocultarPagamentoERecorrencia() {
+function ocultarPagamento() {
     // Pagamento
     const formValor = document.getElementById('formValor');
     const valorPago = document.getElementById('valor_pago_input');
     const formaPagamento = document.getElementById('forma_pagamento_select');
     const recebimentoForm = document.getElementById('receb_sect')
-    const recorrenteCheck = document.getElementById('recorrente_sect')
+   
     const avisoPacote = document.getElementById('aviso-pacote')
     const avisoDesmarcacoes = document.getElementById('aviso-desmarcacoes')
+    const infoPacote = document.getElementById('info_pacote');
 
 
     if (formValor) formValor.style.display = 'none';
     if (recebimentoForm) recebimentoForm.style.display = 'none';
-    if (recorrenteCheck) recorrenteCheck.style.display = 'none';
+
     if (avisoPacote) avisoPacote.style.display = 'none';
     if (avisoDesmarcacoes) avisoDesmarcacoes.style.display = 'none';
     if (valorPago) valorPago.value = '';
     if (formaPagamento) formaPagamento.value = '';
+    if (infoPacote) infoPacote.style.display = 'none';
 
+}
+function ocultarRecorrencia() {
     // Recorrência
     const checkRecorrente = document.getElementById('recorrente');
     const weekRecorrente = document.getElementById('week-recorrente');
+     const recorrenteCheck = document.getElementById('recorrente_sect')
+    if (recorrenteCheck) recorrenteCheck.style.display = 'none';
 
     if (checkRecorrente) checkRecorrente.checked = false;
     if (weekRecorrente) weekRecorrente.classList.remove('active');
 }
+
 
 function aplicarDescontoBloqueado(percent) {
     const descontoInput = document.getElementById('desconto');

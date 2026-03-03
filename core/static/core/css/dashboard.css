@@ -446,7 +446,8 @@ thead tr th:last-child {
     background-color: rgba(247, 0, 0, 0.15);
 }
 
-.status-badge.status-dcr {
+.status-badge.status-dcr,
+.status-badge.status-fcr {
     border: 1px solid #F7F700;
     background-color: rgba(247, 247, 0, 0.15);
 }

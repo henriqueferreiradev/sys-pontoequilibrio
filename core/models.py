@@ -2097,6 +2097,17 @@ class TempoRegistroClinico(models.Model):
     hora_inicio = models.TimeField() 
     hora_fim = models.TimeField() 
 
+class ConfiguracaoSalas(models.Model):
+    nome_sala = models.CharField(max_length=100)
+    ativo = models.BooleanField(default=True)
+
+
+
+
+
+
+
+
 def popular_plano_contas_inicial():
     """
     Popula o banco de dados com o plano de contas da clínica

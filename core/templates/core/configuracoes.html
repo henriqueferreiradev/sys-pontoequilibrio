@@ -1437,7 +1437,7 @@
                 </form>
             </div>
         </div>
-                <div class="form">
+        <div class="form">
             <div class="form-header" onclick="toggleFormSection(this)">
                 <h2><i class='bx bx-building'></i> Documentos da Clínica</h2>
                 <button class="form-toggle">
@@ -1468,6 +1468,36 @@
                         </div>
 
                          
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class='bx bx-save'></i> Salvar Dados
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="form">
+            <div class="form-header" onclick="toggleFormSection(this)">
+                <h2><i class='bx bx-building'></i>Cadastro de Salas/Consultórios</h2>
+                <button class="form-toggle">
+                    <i class='bx bx-chevron-down'></i>
+                </button>
+
+            </div>
+
+            <div class="form-content">
+                <div class="config-info">
+                    <i class='bx bx-info-circle'></i>Sem essa configuração, os agendamentos não poderão ser associados a um local específico, o que pode levar a confusões e sobreposições de horários. Além disso, ter as salas/consultórios cadastrados permite uma melhor visualização e controle da ocupação dos espaços, contribuindo para uma gestão mais eficiente da clínica.
+                </div>
+                <form method="POST" id="form-cadSala">
+                    <input type="hidden" name="tipo" value="cadSala" />
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cnpj"><i class='bx bx-id-card'></i>Nome da sala</label>
+                            <input class="input-field" name="nome_sala" placeholder="Ex: Sala 1, Sala personal,Consultório 2..." type="text"
+                                required>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn-submit">

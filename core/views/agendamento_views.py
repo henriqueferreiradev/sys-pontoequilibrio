@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from core.services.financeiro import criar_receita_pacote
 from core.utils import gerar_mensagem_confirmacao, enviar_lembrete_email, registrar_log, proximo_dia_util
-from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, ConfigAgenda,REGISTROS ,Especialidade, MIDIA_ESCOLHA, LembreteAgenda, Paciente, PacotePaciente, Pagamento, Profissional, Receita, SEXO_ESCOLHA, STATUS_CHOICES, Servico, UF_ESCOLHA, VINCULO, TempoRegistroClinico
+from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, ConfigAgenda, ConfiguracaoSalas, Especialidade, LembreteAgenda, MIDIA_ESCOLHA, Paciente, PacotePaciente, Pagamento, Profissional, REGISTROS, Receita, SEXO_ESCOLHA, STATUS_CHOICES, Servico, TempoRegistroClinico, UF_ESCOLHA, VINCULO
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from collections import defaultdict
@@ -58,7 +58,7 @@ def agenda_view(request):
     profissionais = Profissional.objects.filter(ativo=True)
     servicos = Servico.objects.filter(ativo=True)
     registros = REGISTROS
-
+    salas = ConfiguracaoSalas.objects.filter(ativo=True)
 
     status_remarcaveis = ['d','dcr', 'fcr']
     context = {
@@ -70,6 +70,7 @@ def agenda_view(request):
         'agendamentos':agendamentos,
         'status_remarcaveis': status_remarcaveis,
         'registros': registros,
+        'salas':salas,
     }
 
     return render(request, 'core/agendamentos/agenda.html', context)

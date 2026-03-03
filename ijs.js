@@ -4,7 +4,7 @@
     // ------------------------------------------------------------
     const relatorios = [
         // PACIENTES
-        { setor: "PACIENTES", icon: "fas fa-user-injured", nome: "Relatório de Pacientes Ativos", desc: "Pacientes com status ativo na clínica", slug: "pacientes-ativos", extra: [] },
+        { setor: "PACIENTES", icon: "fa-solid fa-chart-bar", nome: "Relatório de Pacientes Ativos", desc: "Pacientes com status ativo na clínica", slug: "pacientes-ativos", extra: [] },
         { setor: "PACIENTES", icon: "fas fa-user-slash", nome: "Pacientes Inativos", desc: "Pacientes com cadastro inativo", slug: "pacientes-inativos", extra: [] },
         { setor: "PACIENTES", icon: "fas fa-calendar-times", nome: "Pacientes sem comparecimento", desc: "Nunca compareceram ou agendamentos não realizados", slug: "pacientes-sem-comparecimento", extra: [] },
         { setor: "PACIENTES", icon: "fas fa-clock", nome: "Pacientes que não aparecem há X dias", desc: "Filtrar por dias desde último atendimento", slug: "pacientes-ausentes", extra: ['dias'] },

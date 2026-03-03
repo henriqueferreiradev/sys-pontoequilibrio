@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, CategoriaContasReceber, ConfigAgenda, ContaBancaria, ESTADO_CIVIL, EscalaBaseProfissional, Especialidade, Fornecedor, MIDIA_ESCOLHA, MensagemPadrao, Paciente, PacotePaciente, Pagamento, Profissional, SEXO_ESCOLHA, Servico, SubgrupoConta, TipoDocumentoEmpresa, TurnoEscalaProfissional, UF_ESCOLHA, User, VINCULO, ValidadeBeneficios, ValidadeReposicao
+from core.models import Agendamento, CONSELHO_ESCOLHA, COR_RACA, CategoriaContasReceber, ConfigAgenda, ConfiguracaoSalas, ContaBancaria, ESTADO_CIVIL, EscalaBaseProfissional, Especialidade, Fornecedor, MIDIA_ESCOLHA, MensagemPadrao, Paciente, PacotePaciente, Pagamento, Profissional, SEXO_ESCOLHA, Servico, SubgrupoConta, TipoDocumentoEmpresa, TurnoEscalaProfissional, UF_ESCOLHA, User, VINCULO, ValidadeBeneficios, ValidadeReposicao
 from core.utils import filtrar_ativos_inativos, alterar_status_ativo, registrar_log
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -373,7 +373,14 @@ def configuracao_view(request):
 
             messages.success(request, 'Documento salvo com sucesso!')
 
-
+        elif tipo == 'cadSala':
+            
+            nome_sala = request.POST.get('nome_sala')
+            if not nome_sala:
+                return JsonResponse({'error': 'O nome da sala é obrigatório.'}, status=400)
+            
+            ConfiguracaoSalas.objects.create(nome_sala=nome_sala, ativo=True)
+            messages.success(request, 'Sala salva com sucesso!')
         '''
         =====================================================================================
                                             EDIÇÃO

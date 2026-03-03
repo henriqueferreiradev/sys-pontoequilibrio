@@ -493,16 +493,9 @@
                         <label for="ambiente_select"><i class="fas fa-door-open"></i> Ambiente / Sala</label>
                         <select required name="ambiente" id="ambiente_select" class="input-s">
                             <option value="">Selecione...</option>
-                            <option value="Andar 1 - Sala 1">Andar 1 - Sala 1</option>
-                            <option value="Andar 1 - Sala 2">Andar 1 - Sala 2</option>
-                            <option value="Andar 1 - Sala 3">Andar 1 - Sala 3</option>
-                            <option value="Andar 1 - Sala 3">Andar 1 - Sala 4</option>
-                            <option value="Andar 1 - Sala Tati">Andar 1 - Sala da Tati</option>
-                            <option value="Andar 1 - Sala externa">Andar 1 - Sala externa</option>
-                            <option value="Andar 1 - Personal">Andar 1 - Personal</option>
-                            <option value="Andar 2 - Sala 1">Andar 2 - Sala 1</option>
-                            <option value="Andar 2 - Sala 2">Andar 2 - Sala 2</option>
-                            <option value="Andar 2 - Sala 3">Andar 2 - Sala 3</option>
+                            {% for sala in salas %}
+                                <option value="{{ sala.id }}">{{ sala.nome_sala }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
