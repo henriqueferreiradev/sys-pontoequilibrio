@@ -201,15 +201,19 @@ def salvar_registro_tempo(request):
         tipo_registro = request.POST.get('tipo_registro')
         hora_inicio = request.POST.get('hora_inicio')
         hora_fim = request.POST.get('hora_fim')
-
+        date_str = request.POST.get('dataTempo')
+        try:
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else now().date()
+        except:
+            selected_date = now().date()
         profissional = Profissional.objects.get(id=profissional_id)
 
 
-        print(profissional_id, tipo_registro, hora_inicio, hora_fim)
+        print(profissional_id, tipo_registro,selected_date, hora_inicio, hora_fim)
         TempoRegistroClinico.objects.create(
             profissional=profissional,
             tipo_registro=tipo_registro,
-            data=timezone.localdate(),
+            data=selected_date  ,
             hora_inicio=hora_inicio,
             hora_fim=hora_fim,
         )
@@ -447,14 +451,42 @@ def criar_agendamento(request):
     observacoes        = data.get('observacoes', '')
     pacote_codigo_form = data.get('pacote_codigo')
  
-    
-    profissional1_id_int = int(profissional1_id)
- 
-    profissional1 = get_object_or_404(Profissional, id=profissional1_id_int)
+    def _id(v):
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return None
 
+    paciente_id_int      = _id(paciente_id)
+    especialidade_id_int = _id(especialidade_id)
+    profissional1_id_int = _id(profissional1_id)
+    profissional2_id_int = _id(profissional2_id)
+    if not paciente_id_int:
+        return JsonResponse({'error': 'Paciente inválido'}, status=400)
+
+    if not especialidade_id_int:
+        return JsonResponse({'error': 'Especialidade inválida'}, status=400)
+
+    if not profissional1_id_int:
+        return JsonResponse({'error': 'Profissional principal inválido'}, status=400)
+    
+    if not data_sessao:
+        return JsonResponse({'error': 'Data inválida'}, status=400)
+
+    if not hora_inicio or not hora_fim:
+        return JsonResponse({'error': 'Horário inválido'}, status=400)
+
+    if not status_ag:
+        return JsonResponse({'error': 'Status inválido'}, status=400)
+
+    paciente      = get_object_or_404(Paciente, id=paciente_id_int)
+    especialidade = get_object_or_404(Especialidade, id=especialidade_id_int)
+    profissional1 = get_object_or_404(Profissional, id=profissional1_id_int)
+    profissional2 = (Profissional.objects.filter(id=profissional2_id_int).first() if profissional2_id_int else None)
+    
     if status_ag in STATUS_BLOQUEIAM_HORARIO:
         if existe_conflito_profissional(
-            profissional=profissional1,   # ✅ objeto
+            profissional=profissional1,
             data=data_sessao,
             hora_inicio=hora_inicio,
             hora_fim=hora_fim,
@@ -468,8 +500,6 @@ def criar_agendamento(request):
                     f'({"/".join(STATUS_BLOQUEIAM_HORARIO)}) nesse horário.'
                 )
             }, status=400)
-
-
 
     beneficio_tipo       = data.get('beneficio_tipo')  # 'sessao_livre' | 'relaxante' | 'desconto' | 'brinde' | ''
     beneficio_percentual = Decimal(data.get('beneficio_percentual') or 0)
@@ -496,28 +526,7 @@ def criar_agendamento(request):
     except:
         recorrencia_dia_index = None
 
-    # --- VALIDES BÁSICAS ---
-    def _id(v):
-        try: return int(v)
-        except: return None
-
-    paciente_id_int      = _id(paciente_id)
-    especialidade_id_int = _id(especialidade_id)
-    profissional1_id_int = _id(profissional1_id)
-    profissional2_id_int = _id(profissional2_id)
-
-    if not paciente_id_int:
-        return JsonResponse({'error': 'Paciente inválido'}, status=400)
-    if not especialidade_id_int:
-        return JsonResponse({'error': 'Especialidade inválida'}, status=400)
-    if not profissional1_id_int:
-        return JsonResponse({'error': 'Profissional principal inválido'}, status=400)
-
-    paciente      = get_object_or_404(Paciente, id=paciente_id_int)
-    especialidade = get_object_or_404(Especialidade, id=especialidade_id_int)
-    profissional1 = get_object_or_404(Profissional, id=profissional1_id_int)
-    profissional2 = Profissional.objects.filter(id=profissional2_id_int).first() if profissional2_id_int else None
-
+ 
     # ===================================================================
     # DEFINIÇÃO DE SERVIÇO/PACOTE — NUNCA DEIXAR None
     # ===================================================================
@@ -806,23 +815,14 @@ def criar_agendamento(request):
     # CORREÇÃO: Use valor_pago_inicial APENAS se valor_pago for definido e > 0
     valor_pago_inicial_param = valor_pago if valor_pago and valor_pago > 0 else None
 
-    # 🔒 TRAVA: impede criar mais de uma receita para o mesmo pacote
-    receita_existente = Receita.objects.filter(
-        pacote=pacote
-    ).first()
-
-    if receita_existente:
-        receita = receita_existente
-        print('impediu criação')
-    else:
-        receita = criar_receita_pacote(
-            paciente=paciente,
-            pacote=pacote,
-            valor_final=valor_final,
-            vencimento=primeira_data_real,
-            forma_pagamento=forma_pagamento,
-            valor_pago_inicial=valor_pago_inicial_param
-        )
+    receita = criar_receita_pacote(
+        paciente=paciente,
+        pacote=pacote,
+        valor_final=valor_final,
+        vencimento=primeira_data_real,
+        forma_pagamento=forma_pagamento,
+        valor_pago_inicial=valor_pago_inicial_param
+    )
 
     # CORREÇÃO: REMOVA esta seção de registrar pagamento
     # A função criar_receita_pacote já faz isso quando valor_pago_inicial é passado
@@ -831,7 +831,7 @@ def criar_agendamento(request):
     #         receita=receita,
     #         paciente=paciente,
     #         pacote=pacote,
-    #         agendamento=agendamentos_criados[0] if agendamentos_criados else None,
+    #         agendamento=agendamentos_criados[0] if age ndamentos_criados else None,
     #         valor=valor_pago,
     #         forma_pagamento=forma_pagamento
     #     )

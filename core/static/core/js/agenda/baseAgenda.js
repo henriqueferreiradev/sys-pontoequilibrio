@@ -163,12 +163,12 @@ if (formCriarAgendamento) {
                     }
                 }, 800);
             } else {
-                throw new Error(data.error || 'Erro ao criar agendamento');
+                throw new Error(data.error);
             }
 
         } catch (err) {
-            console.error(err);
-            mostrarMensagem('❌ Erro de comunicação com o servidor', 'error');
+
+            mostrarMensagem(`Erro ao criar agendamento: ${err}`, 'error');
 
             // 🔓 REABILITA SE DEU ERRO
             btnSubmit.disabled = false;
@@ -183,7 +183,7 @@ if (formCriarAgendamento) {
 // FUNÇÕES UTILITÁRIAS
 
 function limparTudo() {
-   
+
 
     // 1. Limpar campo de busca e sugestões
     const buscaInput = document.getElementById('busca');
@@ -304,11 +304,11 @@ function limparTudo() {
     // 19. Limpar dados globais
     window.saldosDesmarcacoes = null;
 
-    
+
 }
 // Função para limpar apenas os avisos
 function limparAvisos() {
-  
+
 
     // 1. Limpar avisos de pacote
     const avisoPacote = document.getElementById('aviso-pacote');
@@ -353,7 +353,7 @@ function limparAvisos() {
         usarRemarcacaoBtn.onclick = null;
     }
 
-  
+
 }
 
 // Função para mostrar mensagem no div sem_pacote
@@ -900,7 +900,7 @@ function limparOpcaoPacoteServico() {
 
 }
 
- 
+
 function configurarModalRegistroTempo() {
     const openBtn = document.getElementById('openBtnTimeRegister');
     const closeBtn = document.getElementById('closeBtnRegistroTempo');
@@ -968,12 +968,12 @@ function configurarModalAgendamento() {
 
 function controlarModal(modal, acao) {
     if (!modal) return;
-    
+
     if (acao === 'abrir') {
         modal.classList.add('active');
         modal.removeAttribute('hidden');
         document.body.classList.add('modal-open');
-        
+
         // Se for a sidebar, também ativa o overlay
         if (modal.id === 'sidebar') {
             const overlay = document.getElementById('sidebarOverlay');
@@ -983,7 +983,7 @@ function controlarModal(modal, acao) {
         modal.classList.remove('active');
         modal.setAttribute('hidden', '');
         document.body.classList.remove('modal-open');
-        
+
         // Se for a sidebar, também desativa o overlay
         if (modal.id === 'sidebar') {
             const overlay = document.getElementById('sidebarOverlay');
@@ -1007,11 +1007,11 @@ function salvarRegistroTempo() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert("Registro salvo com sucesso!");
+                mostrarMensagem("Registro salvo com sucesso!", "success");
                 form.reset();
                 fecharModalRegistroTempo();
             } else {
-                alert("Erro ao salvar: " + data.error);
+                mostrarMensagem("Erro ao salvar: " + data.error, "error");
             }
         })
         .catch(error => {
@@ -1019,8 +1019,6 @@ function salvarRegistroTempo() {
         });
 }
 
-
-document.addEventListener('DOMContentLoaded', configurarModalRegistroTempo);
 function configurarSubmenus() {
     document.querySelectorAll('.submenu-header').forEach(header => {
         header.addEventListener('click', function () {
@@ -1370,7 +1368,7 @@ function configurarFormularioEdicao() {
 // =============================================
 document.addEventListener("DOMContentLoaded", async function () {
     configurarModalAgendamento();
-     
+
     configurarModalRegistroTempo();
     configurarSubmenus();
     configurarAutocompletePacientes();

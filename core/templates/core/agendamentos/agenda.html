@@ -570,7 +570,10 @@
             {% endfor %}
             </select>
         </div>
-
+        <div class="formField">
+            <label for="dataInput"><i class="fas fa-calendar"></i> Data</label>
+            <input type="date" name="dataTempo"  required id="dataInput" class="input-s">
+        </div>
         <!-- HORAS -->
         <div class="formRow cols-2">
             <div class="formField">
@@ -595,7 +598,7 @@
 </div>
 
 
-<div class="modal-overlay" id="exConfModal">
+<div style="display:none;" class="modal-overlay" id="exConfModal">
     <div class="modal">
 
         <div class="modal-header">
