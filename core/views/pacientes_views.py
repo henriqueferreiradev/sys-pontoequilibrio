@@ -1355,3 +1355,48 @@ def visualizar_historico_status_paciente(request, paciente_id):
         'core/pacientes/historico/visualizar_historico_status.html',
         context
     )
+    
+    
+def visualizar_dados_financeiros(request, paciente_id):
+
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+
+    receitas = (
+        Receita.objects
+        .filter(paciente_id=paciente_id)
+        .order_by('-vencimento')
+    )
+
+    paginator = Paginator(receitas, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'paciente': paciente,
+        'page_obj': page_obj,
+    }
+
+    return render(
+        request,
+        'core/pacientes/historico/visualizar_dados_financeiros.html',
+        context
+    )
+def pagamentos_receita(request, receita_id):
+
+    receita = get_object_or_404(Receita, id=receita_id)
+
+    pagamentos = receita.pagamentos.all().order_by('-data')
+
+    lista = []
+
+    for p in pagamentos:
+        lista.append({
+            'valor': float(p.valor),
+            'forma': p.get_forma_pagamento_display(),
+            'data': p.data.strftime('%d/%m/%Y'),
+            'status': p.status
+        })
+
+    return JsonResponse({
+        'pagamentos': lista
+    })

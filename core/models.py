@@ -699,7 +699,10 @@ class ValidadeBeneficios(models.Model):
     def __str__(self):
         return f"{self.get_tipo_beneficio_display()} - {self.dias_validade} dias"
     
-    
+class ConfiguracaoSalas(models.Model):
+    nome_sala = models.CharField(max_length=100)
+    ativo = models.BooleanField(default=True)
+
 class Servico(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=8, decimal_places=2)
@@ -875,7 +878,7 @@ class Agendamento(models.Model):
     hora_fim = models.TimeField()
     hora_inicio_aux = models.TimeField(null=True, blank=True)
     hora_fim_aux = models.TimeField(null=True, blank=True)
-    ambiente = models.CharField(max_length=100, blank=True)
+    ambiente = models.ForeignKey(ConfiguracaoSalas, on_delete=models.SET_NULL, null=True, blank=True)
     observacoes = models.TextField(blank=True)
     observacao_autor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,related_name='observacoes')
     observacao_data = models.DateTimeField(null=True, blank=True)
@@ -1983,7 +1986,10 @@ class NotaFiscalEmitida(models.Model):
     observacao = models.TextField(null=True, blank=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     criada_em = models.DateTimeField(auto_now_add=True)
-    
+    def save(self, *args, **kwargs):
+        if self.link and '://' not in self.link:
+            self.link = 'https://' + self.link
+        super().save(*args, **kwargs)
     class Meta:
         ordering = ['-data_emissao']
 
@@ -2097,9 +2103,6 @@ class TempoRegistroClinico(models.Model):
     hora_inicio = models.TimeField() 
     hora_fim = models.TimeField() 
 
-class ConfiguracaoSalas(models.Model):
-    nome_sala = models.CharField(max_length=100)
-    ativo = models.BooleanField(default=True)
 
 
 

@@ -45,7 +45,7 @@ def notas_fiscais_views(request):
     status = request.GET.get('status')
     finalidade_filter = request.GET.get('finalidade')
     
-    nf_pendente_lista = NotaFiscalPendente.objects.select_related('paciente')
+    nf_pendente_lista = NotaFiscalPendente.objects.select_related('paciente','nota_emitida')
 
     if paciente_param:
         if paciente_param.isdigit():

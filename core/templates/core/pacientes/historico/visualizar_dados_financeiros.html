@@ -1,0 +1,174 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Dados Financeiros - {{ paciente.nome }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/tema.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/pacientes/visualizar_historico.css' %}">
+{% endblock %}
+
+{% block topbar_title %}
+<span class="text">
+    <i class="fas fa-wallet"></i> Dados Financeiros
+</span>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+
+    {% include "core/partials/filtros/filtro_historico.html" %}
+
+    <div class='content-list'>
+
+        <div class="lista-prontuarios">
+
+            {% if page_obj %}
+                {% for receita in page_obj %}
+
+                <div class="prontuario-card">
+
+                    <div class="prontuario-info">
+
+                        <div class="prontuario-titulo">
+                            <i class="fas fa-receipt"></i>
+
+                            {{ receita.descricao }}
+
+                            <span class="status-badge status-{{ receita.status }}">
+                                {{ receita.get_status_display }}
+                            </span>
+
+                        </div>
+
+                        <div class="prontuario-metadata">
+
+                            <div class="metadata-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>
+                                    <strong>Valor total:</strong>
+                                    R$ {{ receita.valor }}
+                                </span>
+                            </div>
+
+                            <div class="metadata-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>
+                                    <strong>Pago:</strong>
+                                    R$ {{ receita.total_pago }}
+                                </span>
+                            </div>
+
+                            <div class="metadata-item">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>
+                                    <strong>Saldo:</strong>
+                                    R$ {{ receita.saldo }}
+                                </span>
+                            </div>
+
+                            <div class="metadata-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>
+                                    <strong>Vencimento:</strong>
+                                    {{ receita.vencimento|date:"d/m/Y" }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="prontuario-actions">
+
+                        <button
+                            onclick="abrirPagamentos('{{ receita.id }}')"
+                            class="btn-visualizar">
+
+                            <i class="fas fa-eye"></i> Pagamentos
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+            {% else %}
+                <div class="empty">
+                    <i class="fas fa-wallet" style="font-size:1.6rem; color:var(--roxoPrincipal); margin-bottom:.5rem;"></i>
+                    <h3 style="color:var(--q-preto); margin-bottom:.4rem;">Nenhum registro financeiro encontrado</h3>
+                    <p>Esse paciente ainda não possui movimentações financeiras.</p>
+                </div>
+            {% endif %}
+
+        </div>
+
+        {% include "core/partials/_paginacao.html" %}
+
+    </div>
+<div id="modalPagamentos" class="modal-overlay hidden">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>Pagamentos da Receita</h2>
+
+                <button onclick="fecharModalPagamentos()" class="btn-close">
+                    ✕
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div id="lista-pagamentos"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/js/base/abrirFiltro.js' %}"></script>
+<script>
+function abrirPagamentos(receitaId){
+
+    fetch(`/financeiro/receita/${receitaId}/pagamentos/`)
+    .then(res => res.json())
+    .then(data => {
+
+        const container = document.getElementById("lista-pagamentos")
+        container.innerHTML = ""
+
+        data.pagamentos.forEach(p => {
+
+            container.innerHTML += `
+                <div class="pagamento-item">
+                    <strong>R$ ${p.valor}</strong>
+                    <span>${p.forma}</span>
+                    <small>${p.data}</small>
+                </div>
+            `
+
+        })
+
+        const modal = document.getElementById("modalPagamentos")
+        modal.classList.remove("hidden")
+
+    })
+
+}
+
+function fecharModalPagamentos(){
+    document.getElementById("modalPagamentos").classList.add("hidden")
+}
+</script>
+{% endblock %}

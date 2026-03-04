@@ -736,8 +736,11 @@
                 </section>
 
                 <section class="section">
-                    <h2 class="section-title">Dados Financeiros</h2>
-                    <div class="space-y-4">
+                        <div class='div-section'>
+                            <h2 class="section-subtitle">Dados Financeiros</h2>
+                            <a href="{% url 'visualizar_dados_financeiros' paciente.id %}" class="ver-tudo">Ver todos<i class="fa-solid fa-arrow-right"></i></a>
+
+                        </div>                      <div class="space-y-4">
                         <div>
                             <p class="section-subtitle">Total pago</p>
                             <p class="financial-total green">{{soma_pagamentos}}</p>

@@ -585,3 +585,93 @@ body.modal.show {
 .hidden {
     display: none;
 }
+
+/* ===== ITENS DE PAGAMENTO (modal) ===== */
+#lista-pagamentos{
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+}
+
+/* card */
+.pagamento-item{
+    background: var(--backgroundCard);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 12px;
+    padding: 12px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.pagamento-item:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(107, 70, 193, 0.10);
+    border-color: var(--roxoPrincipal);
+}
+
+/* bloco esquerdo (valor + forma) */
+.pagamento-item strong{
+    color: var(--q-preto);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    display: block;
+    line-height: 1.1;
+}
+
+.pagamento-item span{
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+
+    margin-top: .35rem;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--roxoPrincipal);
+    background: rgba(107, 70, 193, 0.10);
+    border: 1px solid rgba(107, 70, 193, 0.25);
+}
+
+/* data (lado direito) */
+.pagamento-item small{
+    color: #718096;
+    font-size: .85rem;
+    font-weight: 700;
+    white-space: nowrap;
+
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+
+    padding: .35rem .6rem;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* opcional: ícone antes da data (se você quiser usar via ::before) */
+.pagamento-item small::before{
+    content: "📅";
+    font-size: .9rem;
+    opacity: .85;
+}
+
+/* responsivo */
+@media (max-width: 768px){
+    .pagamento-item{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pagamento-item small{
+        align-self: flex-end;
+    }
+}

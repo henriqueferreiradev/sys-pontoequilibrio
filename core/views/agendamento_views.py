@@ -361,7 +361,7 @@ def api_detalhar_agendamento(request, agendamento_id):
         "sessao_realizada": agendamento.pacote.sessoes_realizadas if agendamento.pacote else None,
         "sessoes_restantes": agendamento.pacote.sessoes_restantes if agendamento.pacote else None,
         "qtd_sessoes": agendamento.pacote.qtd_sessoes if agendamento.pacote else None,
-        "ambiente": agendamento.ambiente,
+        "ambiente": agendamento.ambiente.nome_sala,
         "sessao_atual": sessao_atual,
     })
 

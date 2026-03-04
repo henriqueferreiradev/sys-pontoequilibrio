@@ -107,7 +107,8 @@ urlpatterns = [
     path('paciente/historico/agendamentos/<int:paciente_id>/', pacientes_views.visualizar_agendamentos_paciente, name='visualizar_agendamentos_paciente'),
     path('paciente/historico/formularios-respondidos/<int:paciente_id>/', pacientes_views.visualizar_formularios_respondidos_paciente, name='visualizar_formularios_respondidos_paciente'),
     path('paciente/historico/status/<int:paciente_id>/', pacientes_views.visualizar_historico_status_paciente, name='visualizar_historico_status_paciente'),
-
+    path('paciente/historico/dados-financeiros/<int:paciente_id>/', pacientes_views.visualizar_dados_financeiros, name='visualizar_dados_financeiros'),
+    
     #path('paciente/perfil/<int:paciente_id>/todos_agendamentos', pacientes_views.todos_agendamentos, name='todos_agendamentos_paciente'),
     path("api/buscar-pacientes/", pacientes_views.buscar_pacientes, name="buscar_pacientes"),
     path('pacientes/pre_cadastro/', pacientes_views.pre_cadastro, name='pre_cadastro'),
@@ -131,6 +132,7 @@ urlpatterns = [
     path('financeiro/faturamento', financeiro_views.faturamento_view, name='faturamento'),
     path('financeiro/folha-pagamento', financeiro_views.folha_pagamento_view, name='folha_pagamento'),
     path('financeiro/relatorios', financeiro_views.relatorios_view, name='financeiro_relatorios'),
+    path('financeiro/receita/<int:receita_id>/pagamentos/', pacientes_views.pagamentos_receita, name='pagamentos_receita'),
 
     path('api/notificacoes/', notificacoes_views.listar_notificacoes, name='listar_notificacoes'),
     path('administrativo/dashboard/', administrativo_views.dashboard, name="dashboard_adm"),

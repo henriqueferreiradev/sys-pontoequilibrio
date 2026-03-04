@@ -1,146 +1,194 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="{% static 'core/img/icons/logoRoxoFull.png' %}" type="image/png" />
-  <title>Agenda Matrix - Ponto de Equilibro </title>
+  <title>Agenda Matrix - Ponto de Equilíbrio</title>
   <link rel="stylesheet" href="{% static 'core/css/tema.css' %}">
   <link rel="stylesheet" href="{% static 'core/css/agenda/agenda_matriz.css' %}">
-  
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
 </head>
+
 <body data-selected-date="{{ selected_date }}">
-  <div class="professional-filter">
-    <div class="date-picker">
-      <input type="date" id="date-selector" value="{{ selected_date }}">
-      <button id="today-btn">Hoje</button>
-    </div>
-    <select id="profissional-select" class="prof-select">
-      <option value="">Todos os profissionais</option>
-      {% for prof in profissionais %}
-        <option value="{{ prof.id }}">{{ prof.nome }}</option>
-      {% endfor %}
-    </select>
-    <div class="working-today">
-      <label class='checkbox-option'>
-        <input type="checkbox" id="working-today-check">
-        Trabalha neste dia
-      </label>
-    </div>
-      <div class="date-filter">
-    <div class="date-controls">
-      <button id="prev-day"><i class="fas fa-chevron-left"></i></button>
-      <h2 id="current-date">
-        {% if is_today %}
-          Hoje, {{ selected_date }}
-        {% else %}
-          {{ selected_date }}
-        {% endif %}
-      </h2>
-      <button id="next-day"><i class="fas fa-chevron-right"></i></button>
-    </div>
-
-  </div>
-  </div>
-
-
-
-  <div class="agenda-board">
  
-  <!-- Área de horários -->
-  <div class="horarios">
-      <div class="table-container">
-          <table id="agenda-table">
-              <thead>
-                  <tr>
-                      <th class="horario-col">Horário</th>
-                      {% for prof in profissionais %}
-                          <th data-prof-id="{{ prof.id }}" data-prof-name="{{ prof.nome }}">
-                              {{ prof.nome|truncatechars:20 }}
-                          </th>
-                      {% endfor %}
-                  </tr>
-              </thead>
-              <tbody id="agenda-body">
-                  {% for hora in horarios %}
-                      <tr>
-                          <td class="horario-col" data-hora="{{ hora }}">{{ hora }}</td>
-                          {% for prof in profissionais %}
-                              <td data-prof-id="{{ prof.id }}" data-hora="{{ hora }}">
-                                  {% for ag in agendamentos %}
-                                      {% if ag.profissional_1.id == prof.id and hora in ag.horarios_ocupados %}
-                                        {% if hora == ag.slot_inicio %}
-                                          <div class="paciente paciente-span"
-                                              data-slots="{{ ag.qtd_slots }}"
-                                              style="background: {{ ag.especialidade.cor|default:'#8b5cf6' }};"
-                                              onclick="abrirDetalhesAgendamento({{ ag.id }})"
-                                              title="Clique para ver detalhes">
-
-                                            <!-- Linha 1: Paciente + ID -->
-                                            <div class="ag-line ag-title">
-                                              <i class="fas fa-user"></i>
-                                              <span class="ag-text">{{ ag.paciente.nome|truncatechars:15 }}</span>
-                                              {% if ag.contagem_simultaneas > 1 %}
-                                                <div class="notification-bubble" 
-                                                    onclick="event.stopPropagation(); mostrarSessoesSimultaneas({{ ag.profissional_1.id }}, '{{ ag.slot_inicio }}', '{{ selected_date }}')"
-                                                    title="Clique para ver todas as sessões neste horário">
-                                                    <span class="notification-count">{{ ag.contagem_simultaneas }}</span>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- Linha 2: Sessão (só se tiver pacote) -->
-                                            {% if ag.pacote %}
-                                              <div class="ag-line">
-                                                <i class="fas fa-layer-group"></i>
-                                                <span>Sessão <strong>{{ ag.sessao_atual }}</strong> de <strong>{{ ag.pacote.qtd_sessoes }}</strong></span>
-                                              </div>
-                                            {% endif %}
-
-                                            <!-- Linha 3: Ambiente (só se existir) -->
-                                            {% if ag.ambiente %}
-                                              <div class="ag-line">
-                                                <i class="fas fa-door-open"></i>
-                                                <span>{{ ag.ambiente }}</span>
-                                              </div>
-                                            {% endif %}
-
-                                          </div>
-                                        {% endif %}
-
-                                      {% endif %}
-                                  {% endfor %}
-                              </td>
-                          {% endfor %}
-                      </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
+  <div class="professional-filter" id="mainHeader">
+ 
+    <div class="header-zone-left">
+      <div class="date-picker">
+        <input type="date" id="date-selector" value="{{ selected_date }}">
+        <button id="today-btn">Hoje</button>
       </div>
-  </div>
+    </div>
+
  
-  </div>
-  <div id="agendamento-modal" class="modal-overlay">
+    <div class="header-zone-center">
+      <div class="date-filter">
+        <div class="date-controls">
+
+          <button id="prev-day" class="date-nav-btn" title="Dia anterior">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <div class="date-chip" id="date-chip">
+            <span class="date-chip-dow" id="date-chip-dow">
+ 
+            </span>
+            <span class="date-chip-sep"></span>
+            <h2 id="current-date">
+              {% if is_today %}{{ selected_date }}{% else %}{{ selected_date }}{% endif %}
+            </h2>
+            <span class="today-indicator {% if is_today %}visible{% endif %}" id="today-indicator">
+              <span class="live-dot"></span>
+              Hoje
+            </span>
+          </div>
+
+          <button id="next-day" class="date-nav-btn" title="Próximo dia">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Professional filter + checkbox -->
+    <div class="header-zone-right">
+      <select id="profissional-select" class="prof-select">
+        <option value="">Todos os profissionais</option>
+        {% for prof in profissionais %}
+          <option value="{{ prof.id }}">{{ prof.nome }}</option>
+        {% endfor %}
+      </select>
+
+      <div class="working-today">
+        <label class="checkbox-option">
+          <input type="checkbox" id="working-today-check">
+          Trabalha neste dia
+        </label>
+      </div>
+      <a href="{% url 'agenda' %}" class="btn btn-primary"><i class="fas fa-calendar-alt"></i> Voltar pra agenda </a>
+    </div>
 
   </div>
+
+
+  <!-- ============================================================
+       AGENDA BOARD
+  ============================================================= -->
+  <div class="agenda-board">
+    <div class="horarios">
+      <div class="table-container">
+        <table id="agenda-table">
+          <thead>
+            <tr>
+              <th class="horario-col">Horário</th>
+              {% for prof in profissionais %}
+                <th data-prof-id="{{ prof.id }}" data-prof-name="{{ prof.nome }}">
+                  {{ prof.nome|truncatechars:20 }}
+                </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody id="agenda-body">
+            {% for hora in horarios %}
+              <tr>
+                <td class="horario-col" data-hora="{{ hora }}">{{ hora }}</td>
+                {% for prof in profissionais %}
+                  <td data-prof-id="{{ prof.id }}" data-hora="{{ hora }}">
+                    {% for ag in agendamentos %}
+                      {% if ag.profissional_1.id == prof.id and hora in ag.horarios_ocupados %}
+                        {% if hora == ag.slot_inicio %}
+                          <div class="paciente paciente-span"
+                               data-slots="{{ ag.qtd_slots }}"
+                               style="background: {{ ag.especialidade.cor|default:'#8b5cf6' }};"
+                               onclick="abrirDetalhesAgendamento({{ ag.id }})"
+                               title="{{ ag.paciente.nome }} — clique para ver detalhes">
+
+                            <!-- Linha 1: Nome + bubble -->
+                            <div class="ag-line ag-title">
+                              <i class="fas fa-user"></i>
+                              <span class="ag-text">{{ ag.paciente.nome|truncatechars:15 }}</span>
+                              {% if ag.contagem_simultaneas > 1 %}
+                                <div class="notification-bubble"
+                                     onclick="event.stopPropagation(); mostrarSessoesSimultaneas({{ ag.profissional_1.id }}, '{{ ag.slot_inicio }}', '{{ selected_date }}')"
+                                     title="{{ ag.contagem_simultaneas }} sessões simultâneas — clique para ver">
+                                  <span class="notification-count">{{ ag.contagem_simultaneas }}</span>
+                                </div>
+                              {% endif %}
+                            </div>
+
+                            <!-- Linha 2: Sessão (se tiver pacote) -->
+                            {% if ag.pacote %}
+                              <div class="ag-line">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Sessão <strong>{{ ag.sessao_atual }}</strong> de <strong>{{ ag.pacote.qtd_sessoes }}</strong></span>
+                              </div>
+                            {% endif %}
+
+                            <!-- Linha 3: Ambiente (se existir) -->
+                            {% if ag.ambiente %}
+                              <div class="ag-line">
+                                <i class="fas fa-door-open"></i>
+                                <span>{{ ag.ambiente.nome_sala }}</span>
+                              </div>
+                            {% endif %}
+
+                          </div>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL (preenchido via JS)
+  ============================================================= -->
+  <div id="agendamento-modal" class="modal-overlay"></div>
+
+
   {% block scripts %}
-
   <script type="module" src="{% static 'core/js/alertas/main.js' %}"></script>
-      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
   <script src="{% static 'core/js/global-datepicker.js' %}"></script>
   <script src="{% static 'core/js/base/scriptBase.js' %}"></script>
   <script src="{% static 'core/js/agenda/agendaMatriz.js' %}"></script>
-  
-  
 
+  <script>
+    /* ── Day-of-week label no date chip ─────────────── */
+    (function () {
+      const rawDate = document.body.dataset.selectedDate;
+      if (!rawDate) return;
+      const [y, m, d] = rawDate.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const dowEl = document.getElementById('date-chip-dow');
+      if (dowEl) dowEl.textContent = days[date.getDay()];
+    })();
+
+    /* ── Scroll shadow on table scroll ──────────────── */
+    (function () {
+      const header = document.getElementById('mainHeader');
+      const tableContainer = document.querySelector('.table-container');
+      if (!header || !tableContainer) return;
+      tableContainer.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', tableContainer.scrollTop > 4);
+      });
+    })();
+  </script>
   {% endblock %}
+
 </body>
 </html>

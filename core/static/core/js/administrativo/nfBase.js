@@ -443,6 +443,8 @@ async function apiRequest(url, data, method = 'POST') {
 }
 // Funções para ações dos botões (simulação)
 function emitNote() {
+
+    
     alert('Nota fiscal emitida com sucesso! Esta pendência será marcada como resolvida.');
     closeModal('emitModal');
 }

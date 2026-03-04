@@ -14,18 +14,7 @@
 {% block content %}
 
     <div class="content">
-        <!-- Cabeçalho da página -->
-        <header class="page-header">
-            <div class="page-title">
-                <p>Notas fiscais pendentes de emissão ou regularização</p>
-            </div>
-            <div class="page-actions">
-                <div class="pendencies-counter">
-                    <span class="counter-number">{{nf_pendente_count}}</span>
-                    <span>Pendências em Aberto</span>
-                </div>
-            </div>
-        </header>
+ 
 
         <!-- Cards de resumo -->
         <section class="summary-cards">
@@ -206,25 +195,27 @@
                         <td>
                             <div class="action-buttons">
                                 {% if nota.status == 'emitida' or nota.status == 'cancelada' %}
-                                    <button class="action-btn resolve" title="Ver nota"  data-nota-id='{{ nota.id }}' onclick="openInfoModal(this)">
+                                    <button class="action-btn resolve" data-tooltip="Ver detalhes"  data-nota-id='{{ nota.id }}' onclick="openInfoModal(this)">
                                         <i class="fas fa-file-invoice"></i>
                                     </button>
+                                    <a href="{{ nota.nota_emitida.link }}" class="action-btn" data-tooltip="Abrir em nova guia" target="_blank">
+                                        <i class="fas fa-link"></i> </a>
                                 {% else %}
-                                    <button class="action-btn resolve" title="Marcar como Resolvido"  data-nota-id='{{ nota.id }}' onclick="openResolveModal(this)">
+                                    <button class="action-btn resolve" data-tooltip="Marcar como Resolvido"  data-nota-id='{{ nota.id }}' onclick="openResolveModal(this)">
                                         <i class="fas fa-file-invoice"></i>
                                     </button>
-                                    <button class="action-btn cancel" title="Justificar/Cancelar" data-nota-id='{{ nota.id }}' onclick="openCancelModal(this)">
+                                    <button class="action-btn cancel" data-tooltip="Justificar/Cancelar" data-nota-id='{{ nota.id }}' onclick="openCancelModal(this)">
                                         <i class="fas fa-times"></i>
                                     </button>
-                                    <button class="btn-acao salvar" title="Salvar" style="display: none;"
+                                    <button class="btn-acao salvar" data-tooltip="Salvar" style="display: none;"
                                         onclick="salvarEdicao(this)">
                                         <i class="fas fa-check"></i>
                                     </button>
-                                    <button class="btn-acao cancelar" title="Cancelar" style="display: none;"
+                                    <button class="btn-acao cancelar" data-tooltip="Cancelar" style="display: none;"
                                         onclick="cancelarEdicao(this)">
                                         <i class="fas fa-times"></i>
                                     </button>
-                                    <button class="btn-acao editar" title="Editar" onclick="iniciarEdicao(this)">
+                                    <button class="btn-acao editar" data-tooltip="Editar" onclick="iniciarEdicao(this)">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 {% endif %}

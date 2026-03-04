@@ -94,7 +94,7 @@ function updateDateDisplay() {
     const isToday = currentDate.toDateString() === hoje.toDateString();
 
     if (isToday) {
-        document.getElementById('current-date').innerHTML = dateStr + ' <span style="color: var(--roxoPrincipal);"> - Hoje</span>';
+        document.getElementById('current-date').innerHTML = dateStr;
     } else {
         document.getElementById('current-date').textContent = dateStr;
     }

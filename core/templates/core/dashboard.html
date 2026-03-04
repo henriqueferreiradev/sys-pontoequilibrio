@@ -144,7 +144,7 @@
         {% if agendamentos %}
           {% for agendamento in page_obj %}
             <tr>
-              <td style="width: 5px; background-color: {{ agendamento.especialidade.cor }};"></td>
+              <td style="width: 2px; background-color: {{ agendamento.especialidade.cor }};" data-tooltip="{{ agendamento.especialidade.nome }}"></td>
               <td>{{ agendamento.hora_inicio }} - {{ agendamento.hora_fim }}</td>
               <td>{{ agendamento.paciente.nome }} {{ agendamento.paciente.sobrenome }}</td>
               <td>{{ agendamento.profissional_1.nome }} {{ agendamento.profissional_1.sobrenome }}</td>
