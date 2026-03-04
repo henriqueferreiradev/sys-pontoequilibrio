@@ -129,7 +129,7 @@ body {
 .docs-info {
     display: flex;
     gap: var(--espaco-sm);
-    margin-bottom: var(--espaco-md);
+    margin: var(--espaco-sm) 0;
 }
 
 .info-card {

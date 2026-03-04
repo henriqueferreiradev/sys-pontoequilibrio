@@ -44,56 +44,58 @@
                     </tr>
                 </thead>
                 <tbody id="documentsTableBody">
-                    {% if lista_documentos %}
-                    {% for documento in todos_documentos %}
-                        <tr>
-                            <td>{{ documento.nome }}</td>
-                            <td>{{ documento.criado_em|date:"d/m/Y" }}</td>
-                            <td>{% if not documento.status_calculado %} - {% else %} {{ documento.validade|date:"d/m/Y" }} {% endif %}</td>
-                            <td>
-                                <span class="status-badge
-                                    {% if documento.status_calculado == 'vencido' %} status-expired
-                                    {% elif documento.status_calculado == 'vencimento_proximo' %} status-warning
-                                    {% elif documento.status_calculado == 'valido' %} status-valid
-                                    {% elif documento.status_calculado == 'sem_vencimento' %} status-no-expiry
-                                    {% endif %}">
-                                    {% if documento.status_calculado == 'vencido' %} Vencido
-                                    {% elif documento.status_calculado == 'vencimento_proximo' %} Vencimento Próximo
-                                    {% elif documento.status_calculado == 'valido' %} Válido
-                                    {% elif documento.status_calculado == 'sem_vencimento' %} Sem Validade
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                {% if documento.arquivo %}
-                                    <a class="action-btn resolve" href="{{ documento.arquivo.url }}" target="_blank" rel="noopener">
-                                    <i class="fa-solid fa-eye"></i>
-                                    </a>
-                                    <a class="action-btn cancel" href="{{ documento.arquivo.url }}" download>
-                                    <i class="fa-solid fa-download"></i>
-                                    </a>
-                                {% else %}
-                                    <span class="file-empty-msg">
-                                    <i class="fa-solid fa-triangle-exclamation"></i>
-                                    Arquivo não anexado
+                    {% if page_obj %}
+                        {% for documento in page_obj %}
+                            <tr>
+                                <td>{{ documento.nome }}</td>
+                                <td>{{ documento.criado_em|date:"d/m/Y" }}</td>
+                                <td>{% if not documento.status_calculado %} - {% else %} {{ documento.validade|date:"d/m/Y" }} {% endif %}</td>
+                                <td>
+                                    <span class="status-badge
+                                        {% if documento.status_calculado == 'vencido' %} status-expired
+                                        {% elif documento.status_calculado == 'vencimento_proximo' %} status-warning
+                                        {% elif documento.status_calculado == 'valido' %} status-valid
+                                        {% elif documento.status_calculado == 'sem_vencimento' %} status-no-expiry
+                                        {% endif %}">
+                                        {% if documento.status_calculado == 'vencido' %} Vencido
+                                        {% elif documento.status_calculado == 'vencimento_proximo' %} Vencimento Próximo
+                                        {% elif documento.status_calculado == 'valido' %} Válido
+                                        {% elif documento.status_calculado == 'sem_vencimento' %} Sem Validade
+                                        {% endif %}
                                     </span>
-                                {% endif %}
-                                </div>
-                            </td>
-                        </tr>   
-                    {% endfor %}
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                    {% if documento.arquivo %}
+                                        <a class="action-btn resolve" href="{{ documento.arquivo.url }}" target="_blank" rel="noopener">
+                                        <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a class="action-btn cancel" href="{{ documento.arquivo.url }}" download>
+                                        <i class="fa-solid fa-download"></i>
+                                        </a>
+                                    {% else %}
+                                        <span class="file-empty-msg">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        Arquivo não anexado
+                                        </span>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                            </tr>   
+                        {% endfor %}
                     {% else %}
-                        <tr id="emptyRow" style="display: none;">
+                        <tr id="emptyRow">
                             <td colspan="6">
-                                <div class="empty-state">
-                                    <i class="fas fa-folder-open"></i>
-                                    <h3>Nenhum documento cadastrado</h3>
-                                    <p>Clique em "Enviar Documento" para adicionar seu primeiro documento.</p>
-                                </div>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                            <h3 class="empty-title">Nenhuma documento encontrado</h3>
+                            <p class="empty-description">Não encontramos nenhum documento, tente alterar os filtros.</p>
+                        </div>
                             </td>
                         </tr>
-                    
+                
                     {% endif %}
                     
                 </tbody>

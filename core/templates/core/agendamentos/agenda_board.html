@@ -10,9 +10,10 @@
   <link rel="stylesheet" href="{% static 'core/css/tema.css' %}">
   <link rel="stylesheet" href="{% static 'core/css/agenda/agenda_matriz.css' %}">
   
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
 <body data-selected-date="{{ selected_date }}">
@@ -33,9 +34,7 @@
         Trabalha neste dia
       </label>
     </div>
-  </div>
-
-  <div class="date-filter">
+      <div class="date-filter">
     <div class="date-controls">
       <button id="prev-day"><i class="fas fa-chevron-left"></i></button>
       <h2 id="current-date">
@@ -49,26 +48,12 @@
     </div>
 
   </div>
+  </div>
+
+
 
   <div class="agenda-board">
-    <!-- Coluna de Profissionais -->
-    <div class="profissionais" id="profissionais-list">
-      {% for prof in profissionais %}
-        <div class="prof-card {% if not prof.tem_agenda %}sem-agenda{% endif %}" 
-             data-prof-id="{{ prof.id }}"
-             data-prof-name="{{ prof.nome }}">
-          <i class="fas fa-user-md"></i> 
-          <span>{{ prof.nome }}</span>
-          {% if prof.tem_agenda %}
-            <span style="font-size: 0.7rem; margin-left: auto; color: var(--roxoPrincipal);">●</span>
-          {% endif %}
-        </div>
-      {% empty %}
-        <div style="color: var(--text-light); text-align: center; padding: 20px;">
-          Nenhum profissional encontrado
-        </div>
-      {% endfor %}
-    </div>
+ 
   <!-- Área de horários -->
   <div class="horarios">
       <div class="table-container">
@@ -148,8 +133,12 @@
   {% block scripts %}
 
   <script type="module" src="{% static 'core/js/alertas/main.js' %}"></script>
+      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="{% static 'core/js/global-datepicker.js' %}"></script>
   <script src="{% static 'core/js/base/scriptBase.js' %}"></script>
   <script src="{% static 'core/js/agenda/agendaMatriz.js' %}"></script>
+  
   
 
   {% endblock %}

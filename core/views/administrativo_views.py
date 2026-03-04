@@ -15,7 +15,7 @@ from django.db import transaction
 from django.http import JsonResponse
 from calendar import monthrange
 from django.db.models import Q
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from datetime import datetime, date
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -223,21 +223,65 @@ def api_detalhes_notafiscal_por_pendencia(request, pendencia_id):
 
 @login_required(login_url='login')
 def documentos_clinica_views(request):
+    # filtros
     hoje = timezone.now().date()
     limite = hoje +timedelta(days=20)
     lista_documentos = TipoDocumentoEmpresa.objects.all()
-    todos_documentos = DocumentoClinica.objects.all() 
     todos_documentos_count = DocumentoClinica.objects.all().count()
     todos_documentos_vencidos = DocumentoClinica.objects.filter(validade__isnull=False, validade__lt=hoje).count()
     todos_documentos_proximos = DocumentoClinica.objects.filter(validade__isnull=False, validade__gte=hoje,validade__lte=limite).count()
     todos_sem_validade = DocumentoClinica.objects.filter(validade__isnull=True).count()
+
+
+    status_documento = [('valido', 'Válido'), ('vencimento_proximo', 'Vencimento Próximo'),('vencido', 'Vencido'), ('sem_validade', 'Sem Validade'), ] 
+    nome_documento = request.GET.get('nome_documento')
+    status=request.GET.get('status')
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+
+    todos_documentos = DocumentoClinica.objects.all() 
+ 
     
+ 
+
+    # Filtro por período de datas
+    if data_inicio:
+        todos_documentos = todos_documentos.filter(validade__gte=data_inicio)
+    if data_fim:
+        todos_documentos = todos_documentos.filter(validade__lte=data_fim)
+    if nome_documento:
+        todos_documentos = todos_documentos.filter(tipo__id=nome_documento)
+    if status:
+        documentos_filtrados = []
+
+        for doc in todos_documentos:
+            if doc.status_calculado == status:
+                documentos_filtrados.append(doc)
+
+        todos_documentos = documentos_filtrados
+
+
+    paginator = Paginator(todos_documentos, 10)
+    page_number = request.GET.get('page')
+    
+
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        page_obj = paginator.get_page(paginator.num_pages)
+
+     
     context = {
         'lista_documentos':lista_documentos,
         'todos_documentos_vencidos':todos_documentos_vencidos,
         'todos_documentos_proximos':todos_documentos_proximos,
         'todos_documentos':todos_documentos,
+        'status_documento':status_documento,
         'todos_documentos_count':todos_documentos_count,
+        'page_obj': page_obj,
         
     }
     return render(request, 'core/administrativo/documentos.html', context)

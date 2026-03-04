@@ -150,6 +150,14 @@
     display: none;
 }
 
+.filtro-universal.open .filtro-body {
+    display: grid;
+}
+
+.filtro-universal.open .filtro-acoes {
+    display: flex;
+}
+
 .filtro-body {
     padding: 20px;
 
@@ -306,4 +314,17 @@
         grid-template-columns: 1fr;
     }
 }
- 
+
+.filtro-body,
+.filtro-acoes {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .3s ease;
+}
+
+.filtro-universal.open .filtro-body,
+.filtro-universal.open .filtro-acoes {
+    max-height: 500px;
+    opacity: 1;
+}
