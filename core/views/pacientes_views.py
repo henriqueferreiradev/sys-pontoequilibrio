@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
@@ -1051,7 +1052,7 @@ def lista_notas_fiscais_paciente(request, paciente_id):
     return render(request, 'core/pacientes/notas_fiscais/lista_notas_fiscais_paciente.html', context)
 
 
-
+@login_required(login_url='login')
 def visualizar_prontuarios_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     query = request.GET.get('q', '').strip()
@@ -1096,7 +1097,7 @@ def visualizar_prontuarios_paciente(request, paciente_id):
         'page_obj': page_obj,
     }
     return render(request, 'core/pacientes/historico/visualizar_prontuario.html', context)
-
+@login_required(login_url='login')
 def visualizar_evolucoes_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     query = request.GET.get('q', '').strip()
@@ -1140,7 +1141,7 @@ def visualizar_evolucoes_paciente(request, paciente_id):
     }
     return render(request, 'core/pacientes/historico/visualizar_evolucao.html', context)
 
-
+@login_required(login_url='login')
 def visualizar_avaliacoes_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     query = request.GET.get('q', '').strip()
@@ -1186,7 +1187,7 @@ def visualizar_avaliacoes_paciente(request, paciente_id):
     }
     return render(request, 'core/pacientes/historico/visualizar_avaliacao.html', context)
 
-
+@login_required(login_url='login')
 def visualizar_agendamentos_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     
@@ -1245,7 +1246,7 @@ def visualizar_agendamentos_paciente(request, paciente_id):
     }
     return render(request, 'core/pacientes/historico/visualizar_agendamentos.html', context)
 
-
+@login_required(login_url='login')
 def visualizar_formularios_respondidos_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
@@ -1286,7 +1287,7 @@ def visualizar_formularios_respondidos_paciente(request, paciente_id):
         context
     )
     
-
+@login_required(login_url='login')
 def visualizar_historico_status_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
@@ -1356,7 +1357,7 @@ def visualizar_historico_status_paciente(request, paciente_id):
         context
     )
     
-    
+@login_required(login_url='login')   
 def visualizar_dados_financeiros(request, paciente_id):
 
     paciente = get_object_or_404(Paciente, id=paciente_id)

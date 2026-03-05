@@ -703,7 +703,7 @@ select::-ms-expand {
   font-weight: 500;
   height: 40px;
   line-height: 36px;
-  margin: 2px;
+ 
   max-width: 40px;
   transition: var(--transicao);
 }

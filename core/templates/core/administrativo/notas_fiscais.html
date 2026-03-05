@@ -14,8 +14,8 @@
 {% block content %}
 
     <div class="content">
- 
-
+        {% include "core/partials/filtros/filtro_nota_fiscal.html" %}
+        
         <!-- Cards de resumo -->
         <section class="summary-cards">
  
@@ -72,56 +72,7 @@
         </section>
 
         <!-- Filtros -->
-        <form method="GET">
-            <section class="filters-section">
-                <div class="filters-header">
-                    <div class="filters-title">Filtrar Pendências</div>
-                    <button type="button" class="clear-filters"
-                            onclick="window.location.href='{% url 'notas_fiscais' %}'">
-                        <i class="fas fa-times"></i> Limpar filtros
-                    </button>
-
-                </div>
-                <div class="filters-grid">
-
-                    
-
-                    <div class="filter-group">
-                        <label class="filter-label">Paciente</label>
-                        <input  type="search" class="filter-input" name='paciente' placeholder='Buscar pacientes' value='{{ request.GET.paciente }}'>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Prazo</label>
-                        <input type="date" class="filter-input" name='prazo' value='{{ request.GET.prazo }}'>
-                    </div>
-
-                    <div class="filter-group">
-                        <label class="filter-label">Status</label>
-                        <select name='status' class="filter-select">
-                            <option value="">Todos os status</option>
-                            <option value="pendente"{% if request.GET.status == 'pendente' %}selected{% endif %} >Pendente</option>
-                            <option value="emitida" {% if request.GET.status == 'emitida' %}selected{% endif %}>Emitida</option>
-                            <option value="atrasado" {% if request.GET.status == 'atrasado' %}selected{% endif %}>Atrasado</option>
-                            <option value="cancelada" {% if request.GET.status == 'cancelada' %}selected{% endif %}>Cancelada</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Finalidade</label>
-                        <select name='finalidade' class="filter-select">
-                            <option value="">Todas as finalidades</option>
-                            <option value="nf_reembolso_plano" {% if request.GET.status == 'nf_reembolso_plano' %}selected{% endif %}>Reembolso Plano</option>
-                            <option value="nf_imposto_renda" {% if request.GET.status == 'nf_imposto_renda' %}selected{% endif %}>Imposto de Renda</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Buscar
-                    </button>
-                </div>
-
-            </section>
-        </form>
+ 
         <form style="display:none">{% csrf_token %}</form>
         <input type="hidden" id="notaId">
         <!-- Tabela principal -->
@@ -132,9 +83,7 @@
                     <button class="btn btn-secondary">
                         <i class="fas fa-sync-alt"></i> Atualizar
                     </button>
-                    <button class="btn btn-primary" onclick="openEmitModal()" id="btnNewPayment">
-                        <i class="fas fa-plus"></i> Novo Lançamento
-                    </button>
+
                 </div>
             </div>
             {% if nf_pendente_lista %}
@@ -161,9 +110,9 @@
                         <td>R$ {{ nota.receita.valor }}</td>
                         <td>{{ nota.receita.ultimo_pagamento|date:"d/m/Y" }}</td>
                         <td>
-                            {% if nota.paciente.nf_reembolso_plano %}
+                            {% if nota.paciente.nf_reembolso_plano or nota.finalidade_nf == 'nf_reembolso_plano' %}
                             <span class="note-type nfse"><i class="fas fa-file-invoice"></i> Reembolso Plano </span></td>
-                            {% elif nota.paciente.nf_imposto_renda %}
+                            {% elif nota.paciente.nf_imposto_renda or nota.finalidade_nf == 'nf_imposto_renda' %}
                             <span class="note-type nfe"><i class="fas fa-file-invoice"></i> Imposto de Renda </span></td>
                             {% else %}
                             <strong><i class="fas fa-file-invoice"></i>Erro! Sem Finalidade</strong>
@@ -171,10 +120,7 @@
                         </td>
                         <td class="editable" data-field="previsao_emissao" data-id='{{nota.id}}' data-model="nota">
                             <span class="display-text">{{ nota.previsao_emissao|date:'d/m/Y' }}</span>
-                            <input type="text"
-                                            class="edit-input"
-                                            value="{{ nota.previsao_emissao|date:'Y-m-d' }}"
-                                             >
+                            <input type="text" class="edit-input" value="{{ nota.previsao_emissao|date:'Y-m-d' }}">
                         </td>
                     
                         <td>
@@ -406,5 +352,7 @@
 
 {% block scripts %}
 <script src="{% static '/core/js/administrativo/nfBase.js' %}"></script>
+<script src="{% static '/core/js/base/abrirFiltro.js' %}"></script>
+
  
 {% endblock %}

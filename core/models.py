@@ -1957,11 +1957,17 @@ class Lembrete(models.Model):
 
 
 class NotaFiscalPendente(models.Model):
+    OPCOES_NF = [
+        ('imposto_renda', 'Imposto de Renda'),
+        ('reembolso_plano', 'Reembolso Plano de Saúde'),
+    ]
+    
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     receita  = models.ForeignKey(Receita, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     competencia = models.DateField(help_text='Mês/Ano fiscal da NF')
     status = models.CharField(max_length=20, choices=[('pendente','Pendente'),('emitida','Emitida'),('atrasado','Atrasado'), ('cancelada','Cancelada')], default='pendente')
+    finalidade_nf = models.CharField(max_length=20, choices=OPCOES_NF, blank=True, null=True)
     previsao_emissao = models.DateField(null=True, blank=True)
     emitida_em = models.DateField(null=True, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,95 @@
+{% load static %}
+ 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/partials/filtros/filtro_auditoria.css' %}">
+ 
+{% endblock %}
+<div class="filtro-universal">
+    <div class="filtro-header">
+        <h2><i class='bx bx-filter-alt'></i> Filtros</h2>
+        <div>
+                            <button class="btn btn-new-ag" onclick="openEmitModal()" id="btnNewPayment">
+                        <i class="fas fa-plus"></i> Novo Lançamento
+                    </button>
+ 
+        <button type="button" class="filtro-toggle">
+        <i class='bx bx-chevron-down'></i>
+        </button>
+        </div>
+    </div>
+            <!-- FORM de filtros -->
+    <form method="get">
+        <div class="filtro-body">
+        <div class="filtro-campo">
+            <label for="filtro-nome">Busca Avançada</label>
+            <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            id="filtro-nome"
+            class="filtro-input"
+            placeholder="Digite por paciente, profissional ou pacotes..."
+          />
+        </div>
+  
+      <div class="filtro-campo">
+        <label for="filtro-categoria">Especialidade</label>
+        <select name='status' class="filtro-select">
+            <option value="">Todos os status</option>
+            <option value="pendente"{% if request.GET.status == 'pendente' %}selected{% endif %} >Pendente</option>
+            <option value="emitida" {% if request.GET.status == 'emitida' %}selected{% endif %}>Emitida</option>
+            <option value="atrasado" {% if request.GET.status == 'atrasado' %}selected{% endif %}>Atrasado</option>
+            <option value="cancelada" {% if request.GET.status == 'cancelada' %}selected{% endif %}>Cancelada</option>
+        </select>
+      </div>
+  
+        <div class="filtro-campo">
+          <label for="filtro-status">Finalidade</label>
+          <div class="status-col">
+                <select name='finalidade' class="filtro-select">
+                <option value="">Todas as finalidades</option>
+                <option value="nf_reembolso_plano" {% if request.GET.status == 'nf_reembolso_plano' %}selected{% endif %}>Reembolso Plano</option>
+                <option value="nf_imposto_renda" {% if request.GET.status == 'nf_imposto_renda' %}selected{% endif %}>Imposto de Renda</option>
+                </select>
+
+            </div>       
+        </div>
+  
+        <div class="filtro-campo">
+          <label for="filtro-data-inicio">Data Início</label>
+          <div class="filtro-data-wrapper">
+            <input
+              type="date"
+              name="data_inicio"
+              id="filtro-data-inicio"
+              value="{{ request.GET.data_inicio }}"
+              class="filtro-input"
+            />
+          </div>
+        </div>
+  
+        <div class="filtro-campo">
+          <label for="filtro-data-fim">Data Fim</label>
+          <div class="filtro-data-wrapper">
+            <input
+              type="date"
+              name="data_fim"
+              id="filtro-data-fim"
+              value="{{ request.GET.data_fim }}"
+              class="filtro-input"
+            />
+          </div>
+        </div>
+      </div>
+  
+      <div class="filtro-acoes">
+       
+        <a href="{% url 'agenda' %}" class="btn btn-secondary"><i class='bx bx-reset'></i> Limpar</a>
+    
+            <button type="submit" name="filtrar" value="1" class="btn btn-primary">
+            <i class='bx bx-filter'></i> Aplicar Filtros
+            </button>
+      </div>
+    </form>
+  </div>
+  

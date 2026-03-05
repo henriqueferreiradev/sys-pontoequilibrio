@@ -41,7 +41,8 @@ def notas_fiscais_views(request):
 
 
     paciente_param = request.GET.get('paciente')
-    prazo_filter = request.GET.get('prazo')
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
     status = request.GET.get('status')
     finalidade_filter = request.GET.get('finalidade')
     
@@ -53,9 +54,10 @@ def notas_fiscais_views(request):
         else:
             nf_pendente_lista = nf_pendente_lista.filter(paciente__nome__icontains=paciente_param)
 
-    if prazo_filter:
-        data = datetime.strptime(prazo_filter, '%Y-%m-%d').date()
-        nf_pendente_lista = nf_pendente_lista.filter(previsao_emissao=data)
+    if data_inicio:
+        nf_pendente_lista = nf_pendente_lista.filter(previsao_emissao__gte=data_inicio)
+    if data_fim:
+        nf_pendente_lista = nf_pendente_lista.filter(previsao_emissao__lte=data_fim)
 
     if status:
         nf_pendente_lista =  nf_pendente_lista.filter(status=status)
@@ -165,7 +167,7 @@ def nova_nota_fiscal(request):
         paciente_id = data.get("paciente_id")
         receita_id = data.get("receita_id")
         competencia_str = data.get("competencia")  # opcional se quiser mandar
-        # NÃO PEGAR valor do front!
+        tipo_nota = data.get("tipoNota")  
 
         if not paciente_id or not receita_id:
             return JsonResponse({'success': False, 'error': 'paciente_id e receita_id são obrigatórios'}, status=400)
@@ -177,10 +179,8 @@ def nova_nota_fiscal(request):
                 .get(id=receita_id, paciente_id=paciente_id)
             )
 
-            # ✅ Valor vem do banco
             valor_nota = receita.valor  # DecimalField -> já vem Decimal
-
-            # ✅ Competência: se vier do front ok; senão, usa mês da data de pagamento (ou hoje)
+ 
             if competencia_str:
                 competencia = parse_date(competencia_str)
                 if not competencia:
@@ -189,12 +189,16 @@ def nova_nota_fiscal(request):
                 base = receita.ultimo_pagamento or timezone.now().date()
                 competencia = base.replace(day=1)
 
-            # ✅ Previsão: data base + 3 dias
-            # (ajuste se sua regra for outra data)
+ 
             if not receita.ultimo_pagamento:
                 return JsonResponse({'success': False, 'error': 'Receita sem data de pagamento (ultimo_pagamento) para calcular previsão.'}, status=400)
 
-            previsao_emissao = receita.ultimo_pagamento + timedelta(days=3)
+            base_pagamento = receita.ultimo_pagamento
+
+            if hasattr(base_pagamento, "date"):
+                base_pagamento = base_pagamento.date()
+
+            previsao_emissao = base_pagamento + timedelta(days=3)
 
             # (opcional) evitar duplicar NF pendente pra mesma receita
             nota, criada = NotaFiscalPendente.objects.get_or_create(
@@ -204,6 +208,7 @@ def nova_nota_fiscal(request):
                     'valor': valor_nota,
                     'competencia': competencia,
                     'previsao_emissao': previsao_emissao,
+                    'finalidade_nf': tipo_nota,
                 }
             )
 

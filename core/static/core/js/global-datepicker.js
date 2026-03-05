@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dateFormat: "Y-m-d",
             altInput: true,
             altFormat: "d/m/Y",
-            locale: "pt",
+            locale: flatpickr.l10ns.pt,
             disableMobile: true,
             onReady: (_, __, instance) => {
                 instance.altInput.placeholder = input.getAttribute("placeholder") || "Selecione uma data";
