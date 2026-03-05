@@ -887,6 +887,7 @@ class Agendamento(models.Model):
     tags = models.CharField(max_length=200, blank=True)
     foi_reposto = models.BooleanField(default=False)
     data_desmarcacao = models.DateTimeField(null=True, blank=True)
+    
     def __str__(self):
         return f"{self.paciente} - {self.data} {self.hora_inicio}"
 

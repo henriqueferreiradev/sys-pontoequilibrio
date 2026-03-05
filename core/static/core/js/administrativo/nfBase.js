@@ -442,10 +442,30 @@ async function apiRequest(url, data, method = 'POST') {
     }
 }
 // Funções para ações dos botões (simulação)
-function emitNote() {
+async function emitNote() {
+    const pacienteId = document.getElementById('paciente_id').value;
+    const servico = document.getElementById('servicoSelect').value;
+    const valor = document.getElementById('valorPago').value;
+    const dataPag = document.getElementById('dataPag').value;
+    const tipoNota = document.getElementById('tipoNota').value
 
-    
-    alert('Nota fiscal emitida com sucesso! Esta pendência será marcada como resolvida.');
+    const dados = {
+        paciente_id: pacienteId,
+        receita_id: servico,
+        valorPago: valor,
+        dataPag: dataPag,
+        tipoNota: tipoNota
+    }
+
+    console.log('Dados para emissão:', dados);
+
+    const res = await apiRequest('/api/nova-nota/', dados);
+    if (res.success) {
+        mostrarMensagem('Nova nota fiscal registrada com sucesso!', 'success');
+        closeModal('emitModal');
+    } else {
+        mostrarMensagem('Erro ao registrar nota fiscal: ' + res.error, 'error');
+    }
     closeModal('emitModal');
 }
 
@@ -458,6 +478,7 @@ async function resolvePendency() {
         link: document.getElementById('link_nota').value,
         data_emissao: document.getElementById('emissao_nota').value,
         observacao: document.getElementById('observacao_nota').value
+
     };
 
     console.log(dados);
@@ -667,7 +688,9 @@ function configurarAutocompletePacientes() {
 
 async function carregarServicosPaciente(pacienteId) {
     const select = document.getElementById('servicoSelect');
+    const receitaHidden = document.getElementById('receitaHidden');
     select.innerHTML = '<option>Carregando...</option>';
+
 
     const res = await fetch(`/api/paciente/${pacienteId}/servicos/`);
     const data = await res.json();
@@ -681,6 +704,7 @@ async function carregarServicosPaciente(pacienteId) {
         opt.dataset.valor = s.valor;
         opt.dataset.data = s.data_pagamento;
         select.appendChild(opt);
+
 
     });
 }

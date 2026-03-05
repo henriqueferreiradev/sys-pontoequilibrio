@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/profissionais-trabalham/', agendamento_views.profissionais_trabalham_no_dia, name='profissionais_trabalham'),
     path('api/salvar-nf/', administrativo_views.salvar_notafiscal, name='salvar_notafiscal'),
     path('api/cancelar-nf/', administrativo_views.cancelar_notafiscal, name='cancelar_notafiscal'),
+    path('api/nova-nota/', administrativo_views.nova_nota_fiscal, name='nova_nota_fiscal'),
     path('api/salvar-documento/', administrativo_views.salvar_documento_empresa, name='salvar_documento_empresa'),
     path('api/paciente/<int:paciente_id>/servicos/', pacientes_views.servicos_paciente),
     path('agenda/lembrete/',agendamento_views.lembrete_agendamento_dia_seguinte, name='lembrete_agenda'),

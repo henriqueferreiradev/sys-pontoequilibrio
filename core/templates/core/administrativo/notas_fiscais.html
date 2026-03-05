@@ -257,6 +257,7 @@
                 <div class="form-group">
                     <label class="form-label">Serviço</label>
                     <select id="servicoSelect" class="form-input">
+                    <input type="hidden" id="servico_id">
                         <option value="">Selecione um paciente primeiro</option>
                     </select>
                 </div>
@@ -278,7 +279,7 @@
                 
                 <div class="form-group">
                     <label class="form-label">Tipo de nota *</label>
-                    <select class="form-input">
+                    <select id="tipoNota" class="form-input">
                         <option value="">Selecione o tipo de nota</option>
                         <option value="nf_reembolso_plano">Reembolso Plano</option>
                         <option value="nf_imposto_renda">Imposto de Renda</option>

@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.template.context_processors import request
 import json
-from core.models import Agendamento, AvaliacaoFisioterapeutica, ConfigAgenda, DocumentoClinica, EscalaBaseProfissional, Evolucao, NotaFiscalCancelada, NotaFiscalEmitida, NotaFiscalPendente, ProdutividadeDia, ProdutividadeMensal, Profissional, Prontuario, TempoRegistroClinico, TipoDocumentoEmpresa
+from core.models import Agendamento, AvaliacaoFisioterapeutica, ConfigAgenda, DocumentoClinica, EscalaBaseProfissional, Evolucao, NotaFiscalCancelada, NotaFiscalEmitida, NotaFiscalPendente, ProdutividadeDia, ProdutividadeMensal, Profissional, Prontuario, Receita, TempoRegistroClinico, TipoDocumentoEmpresa
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -66,25 +66,12 @@ def notas_fiscais_views(request):
     if finalidade_filter == 'nf_imposto_renda':
         nf_pendente_lista =  nf_pendente_lista.filter(paciente__nf_imposto_renda=True)
 
-
-    
-
    
     nf_pendente_count = nf_pendente_lista.filter(status='pendente').count()
     nf_pendente_count_hoje = nf_pendente_lista.filter(criado_em=hoje,status='pendente').count()
     nf_pendente_soma = nf_pendente_lista.filter(status__in=['pendente', 'atrasado']).aggregate(total=Sum('valor'))['total'] or 0
     nf_atrasado_count = NotaFiscalPendente.objects.filter(status='atrasado').count()
     nf_emitidas_hoje_count = NotaFiscalEmitida.objects.filter(data_emissao=hoje).count()
- 
-
-
-
-
-
-
-
-
-
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         tipo = request.POST.get('tipo')
@@ -157,6 +144,85 @@ def salvar_notafiscal(request):
             {'success': False, 'error': str(e)},
             status=500
         )
+from datetime import timedelta
+from decimal import Decimal
+import json
+
+from django.http import JsonResponse
+from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_POST
+from django.db import transaction
+
+@require_POST
+def nova_nota_fiscal(request):
+    try:
+        if request.content_type != "application/json":
+            return JsonResponse({'success': False, 'error': 'Content-Type inválido'}, status=415)
+
+        data = json.loads(request.body)
+
+        paciente_id = data.get("paciente_id")
+        receita_id = data.get("receita_id")
+        competencia_str = data.get("competencia")  # opcional se quiser mandar
+        # NÃO PEGAR valor do front!
+
+        if not paciente_id or not receita_id:
+            return JsonResponse({'success': False, 'error': 'paciente_id e receita_id são obrigatórios'}, status=400)
+
+        with transaction.atomic():
+            receita = (
+                Receita.objects
+                .select_related('pacote__servico')
+                .get(id=receita_id, paciente_id=paciente_id)
+            )
+
+            # ✅ Valor vem do banco
+            valor_nota = receita.valor  # DecimalField -> já vem Decimal
+
+            # ✅ Competência: se vier do front ok; senão, usa mês da data de pagamento (ou hoje)
+            if competencia_str:
+                competencia = parse_date(competencia_str)
+                if not competencia:
+                    return JsonResponse({'success': False, 'error': 'competencia inválida (use YYYY-MM-DD)'}, status=400)
+            else:
+                base = receita.ultimo_pagamento or timezone.now().date()
+                competencia = base.replace(day=1)
+
+            # ✅ Previsão: data base + 3 dias
+            # (ajuste se sua regra for outra data)
+            if not receita.ultimo_pagamento:
+                return JsonResponse({'success': False, 'error': 'Receita sem data de pagamento (ultimo_pagamento) para calcular previsão.'}, status=400)
+
+            previsao_emissao = receita.ultimo_pagamento + timedelta(days=3)
+
+            # (opcional) evitar duplicar NF pendente pra mesma receita
+            nota, criada = NotaFiscalPendente.objects.get_or_create(
+                receita=receita,
+                defaults={
+                    'paciente_id': paciente_id,
+                    'valor': valor_nota,
+                    'competencia': competencia,
+                    'previsao_emissao': previsao_emissao,
+                }
+            )
+
+            if not criada:
+                # se já existia, você pode atualizar valores se quiser:
+                nota.valor = valor_nota
+                nota.competencia = competencia
+                nota.previsao_emissao = previsao_emissao
+
+            nota.atualizar_status()
+            nota.save()
+
+        return JsonResponse({'success': True, 'nota_id': nota.id})
+
+    except Receita.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Receita não encontrada para este paciente'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
 
 @login_required(login_url='login')
 def cancelar_notafiscal(request):

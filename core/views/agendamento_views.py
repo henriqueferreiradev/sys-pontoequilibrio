@@ -462,6 +462,7 @@ def criar_agendamento(request):
     especialidade_id_int = _id(especialidade_id)
     profissional1_id_int = _id(profissional1_id)
     profissional2_id_int = _id(profissional2_id)
+    ambiente_id_int      = _id(ambiente) 
     if not paciente_id_int:
         return JsonResponse({'error': 'Paciente inválido'}, status=400)
 
@@ -479,11 +480,15 @@ def criar_agendamento(request):
 
     if not status_ag:
         return JsonResponse({'error': 'Status inválido'}, status=400)
+    
+    if not ambiente_id_int:
+        return JsonResponse({'error': 'Ambiente inválido'}, status=400)
 
     paciente      = get_object_or_404(Paciente, id=paciente_id_int)
     especialidade = get_object_or_404(Especialidade, id=especialidade_id_int)
     profissional1 = get_object_or_404(Profissional, id=profissional1_id_int)
     profissional2 = (Profissional.objects.filter(id=profissional2_id_int).first() if profissional2_id_int else None)
+    ambiente = get_object_or_404(ConfiguracaoSalas, id=ambiente_id_int) if ambiente_id_int else None
     
     if status_ag in STATUS_BLOQUEIAM_HORARIO:
         if existe_conflito_profissional(
