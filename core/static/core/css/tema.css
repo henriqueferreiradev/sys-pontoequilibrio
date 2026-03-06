@@ -687,6 +687,10 @@ select::-ms-expand {
   margin-bottom: 8px;
 }
 
+span.flatpickr-weekday {
+  color: white;
+}
+
 .flatpickr-weekday {
   color: var(--roxoPrincipal);
   font-weight: 600;
@@ -703,7 +707,7 @@ select::-ms-expand {
   font-weight: 500;
   height: 40px;
   line-height: 36px;
- 
+
   max-width: 40px;
   transition: var(--transicao);
 }

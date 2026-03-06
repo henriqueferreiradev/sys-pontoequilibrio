@@ -180,11 +180,12 @@
 }
 
 .filtro-campo label {
-    display: block;
+    display: flex;
     margin-bottom: 8px;
     font-weight: 600;
     color: var(--cinzaEscuro);
     font-size: 14px;
+    justify-content: space-between;
 }
 
 .filtro-input,
@@ -316,7 +317,9 @@
 }
 
 .filtro-body,
-.filtro-acoes {
+.filtro-acoes,
+
+.filtro-body-clear {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -324,7 +327,24 @@
 }
 
 .filtro-universal.open .filtro-body,
-.filtro-universal.open .filtro-acoes {
+.filtro-universal.open .filtro-acoes,
+.filtro-universal.open .filtro-body-clear {
     max-height: 500px;
     opacity: 1;
+}
+
+.clear-btn {
+    display: flex;
+    width: fit-content;
+    color: var(--roxoPrincipal);
+    gap: .5em;
+    align-items: center;
+    font-size: 14px;
+}
+
+.filtro-body-clear {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .3s ease;
 }

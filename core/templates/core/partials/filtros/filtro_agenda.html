@@ -17,88 +17,90 @@
     </div>
             <!-- FORM de filtros -->
     <form method="get">
+
         <div class="filtro-body">
-        <div class="filtro-campo">
-            <label for="filtro-nome">Busca Avançada</label>
-            <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            id="filtro-nome"
-            class="filtro-input"
-            placeholder="Digite por paciente, profissional ou pacotes..."
-          />
-        </div>
-  
-      <div class="filtro-campo">
-        <label for="filtro-categoria">Especialidade</label>
-        <select name="especialidade_id" id="especialidadeInput" class="filtro-select">
-          <option value="">Selecione uma especialidade</option>
-          
-          {% for esp in especialidades %}
-          <option value="{{ esp.id }}" 
-                  {% if request.GET.especialidade_id == esp.id|stringformat:"s" %}selected{% endif %}>
-              {{ esp.nome }}
-          </option>
-          {% endfor %}
-        </select>
-      </div>
-  
-        <div class="filtro-campo">
-          <label for="filtro-status"></label>
-          <div class="status-col">
-              <select name="status" class="filtro-select">
-                <option value="" {% if not request.GET.status %}selected{% endif %}>
-                  Selecione a situação...
-                </option>
-
-                <option value="pre" {% if request.GET.status == "pre" %}selected{% endif %}>✅ Pré-Agendado</option>
-                <option value="agendado" {% if request.GET.status == "agendado" %}selected{% endif %}>✅ Agendado</option>
-                <option value="finalizado" {% if request.GET.status == "finalizado" %}selected{% endif %}>✅ Consulta finalizada!</option>
-                <option value="desistencia_remarcacao" {% if request.GET.status == "desistencia_remarcacao" %}selected{% endif %}>⚠️ DCR - Desmarcação com reposição</option>
-                <option value="falta_remarcacao" {% if request.GET.status == "falta_remarcacao" %}selected{% endif %}>⚠️ FCR - Falta com reposição</option>
-                <option value="falta_cobrada" {% if request.GET.status == "falta_cobrada" %}selected{% endif %}>❌ FC - Falta cobrada</option>
-                <option value="desistencia" {% if request.GET.status == "desistencia" %}selected{% endif %}>❌ D - Desistência</option>
-              </select>
-
-            </div>       
-        </div>
-  
-        <div class="filtro-campo">
-          <label for="filtro-data-inicio">Data Início</label>
-          <div class="filtro-data-wrapper">
-            <input
-              type="date"
-              name="data_inicio"
-              id="filtro-data-inicio"
-              value="{{ request.GET.data_inicio }}"
+          <div class="filtro-campo">
+              <label for="filtro-nome">Busca Avançada</label>
+              <input
+              type="text"
+              name="q"
+              value="{{ query }}"
+              id="filtro-nome"
               class="filtro-input"
+              placeholder="Digite por paciente, profissional ou pacotes..."
             />
           </div>
-        </div>
-  
-        <div class="filtro-campo">
-          <label for="filtro-data-fim">Data Fim</label>
-          <div class="filtro-data-wrapper">
-            <input
-              type="date"
-              name="data_fim"
-              id="filtro-data-fim"
-              value="{{ request.GET.data_fim }}"
-              class="filtro-input"
-            />
-          </div>
-        </div>
-      </div>
-  
-      <div class="filtro-acoes">
-       
-        <a href="{% url 'agenda' %}" class="btn btn-secondary"><i class='bx bx-reset'></i> Limpar</a>
     
-            <button type="submit" name="filtrar" value="1" class="btn btn-primary">
-            <i class='bx bx-filter'></i> Aplicar Filtros
+          <div class="filtro-campo">
+            <label for="filtro-categoria">Especialidade</label>
+            <select name="especialidade_id" id="especialidadeInput" class="filtro-select">
+              <option value="">Selecione uma especialidade</option>
+              
+              {% for esp in especialidades %}
+              <option value="{{ esp.id }}" 
+                      {% if request.GET.especialidade_id == esp.id|stringformat:"s" %}selected{% endif %}>
+                  {{ esp.nome }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+    
+          <div class="filtro-campo">
+            <label for="filtro-status">Situação</label>
+            <div class="status-col">
+                <select name="status" class="filtro-select">
+                  <option value="" {% if not request.GET.status %}selected{% endif %}>
+                    Selecione a situação...
+                  </option>
+
+                  <option value="pre" {% if request.GET.status == "pre" %}selected{% endif %}>✅ Pré-Agendado</option>
+                  <option value="agendado" {% if request.GET.status == "agendado" %}selected{% endif %}>✅ Agendado</option>
+                  <option value="finalizado" {% if request.GET.status == "finalizado" %}selected{% endif %}>✅ Consulta finalizada!</option>
+                  <option value="desistencia_remarcacao" {% if request.GET.status == "desistencia_remarcacao" %}selected{% endif %}>⚠️ DCR - Desmarcação com reposição</option>
+                  <option value="falta_remarcacao" {% if request.GET.status == "falta_remarcacao" %}selected{% endif %}>⚠️ FCR - Falta com reposição</option>
+                  <option value="falta_cobrada" {% if request.GET.status == "falta_cobrada" %}selected{% endif %}>❌ FC - Falta cobrada</option>
+                  <option value="desistencia" {% if request.GET.status == "desistencia" %}selected{% endif %}>❌ D - Desistência</option>
+                </select>
+
+              </div>       
+          </div>
+      
+          <div class="filtro-campo">
+            <label for="filtro-data-inicio">Data Início</label>
+            <div class="filtro-data-wrapper">
+              <input
+                type="date"
+                name="data_inicio"
+                id="filtro-data-inicio"
+                value="{{ request.GET.data_inicio }}"
+                class="filtro-input"
+              />
+            </div>
+          </div>
+      
+          <div class="filtro-campo">
+            <label for="filtro-data-fim">Data Fim<a href="{% url 'agenda' %}" class="clear-btn"><i class="fa-solid fa-x"></i>Limpar</a></label>
+            <div class="filtro-data-wrapper">
+              <input
+                type="date"
+                name="data_fim"
+                id="filtro-data-fim"
+                value="{{ request.GET.data_fim }}"
+                class="filtro-input"
+              />
+            </div>
+          </div>
+          <div class="filtro-campo">
+              <button type="submit" name="filtrar" value="1" class="btn btn-primary">
+              <i class="fa-solid fa-filter"></i> Procurar
             </button>
+         </div>
+    
+ 
       </div>
+       
+
+
     </form>
   </div>
   
