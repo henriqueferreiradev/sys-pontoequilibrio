@@ -18,13 +18,19 @@ from core.views import (
     frequencia_views,
     lembretes_views,
     notificacoes_views,
+    relatorios_views
 )
 
  
 
 urlpatterns = [
     
+        path('administrativo/relatorios/', relatorios_views.pagina_relatorios, name='central'),
     
+    # APIs (para o JavaScript)
+    path('relatorios/api/listar/', relatorios_views.listar_relatorios, name='api_listar'),
+    path('relatorios/api/executar/<slug:slug>/', relatorios_views.executar_relatorio, name='api_executar'),
+    path('relatorios/api/exportar/<slug:slug>/<str:formato>/', relatorios_views.exportar_relatorio, name='api_exportar'),
     path('api/verificar_beneficios_mes/<int:paciente_id>', agendamento_views.verificar_beneficios_mes, name='verificar_beneficios_mes'),
     path('api/beneficios/usar',agendamento_views.usar_beneficio,name='usar_beneficio'),
     path('api/agendamentos/', agendamento_views.criar_agendamento, name='criar_agendamento'),
@@ -184,5 +190,5 @@ urlpatterns = [
 
     path('lembretes/', lembretes_views.lembrete_views, name='lembretes'),
    
-    
+
 ]

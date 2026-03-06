@@ -2265,3 +2265,67 @@ def popular_plano_contas_inicial():
 
     
      
+# relatorios/models.py
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+import json
+
+class CategoriaRelatorio(models.Model):
+    """Categorias (SETORES) - igual seus setores da clínica"""
+    nome = models.CharField(max_length=100)  # PACIENTES, PROFISSIONAIS, etc
+    icone = models.CharField(max_length=50, default='fas fa-folder')
+    ordem = models.IntegerField(default=0)
+    
+    class Meta:
+        verbose_name = "Categoria"
+        verbose_name_plural = "Categorias"
+        ordering = ['ordem']
+    
+    def __str__(self):
+        return self.nome
+
+class RelatorioConfig(models.Model):
+    """Configuração dos relatórios - igual seu JSON estático"""
+    categoria = models.ForeignKey(CategoriaRelatorio, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=200)
+    descricao = models.TextField(blank=True)
+    slug = models.SlugField(unique=True)
+    icone = models.CharField(max_length=50, default='fas fa-chart-bar')
+    
+    # Configuração dos filtros extras (em JSON)
+    filtros_disponiveis = models.JSONField(
+        default=list,
+            blank=True,  # ADICIONE ISSO
+    null=True, 
+        help_text='''
+        ["dias", "profissional", "setor", "status", "tipo_atendimento"]
+        '''
+    )
+    
+    # Query SQL ou caminho para função
+    query_sql = models.TextField(blank=True)
+    funcao_python = models.CharField(max_length=200, blank=True)
+    
+    ativo = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name = "Relatório"
+        verbose_name_plural = "Relatórios"
+    
+    def __str__(self):
+        return f"{self.categoria.nome} - {self.nome}"
+
+class ExecucaoRelatorio(models.Model):
+    """Histórico de execuções"""
+    relatorio = models.ForeignKey(RelatorioConfig, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
+    parametros = models.JSONField()
+    dados_resultado = models.JSONField(null=True, blank=True)
+    arquivo_exportado = models.FileField(upload_to='relatorios/', null=True, blank=True)
+    data_execucao = models.DateTimeField(auto_now_add=True)
+    tempo_execucao = models.FloatField()
+    
+    class Meta:
+        ordering = ['-data_execucao']
