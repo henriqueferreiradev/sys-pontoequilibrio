@@ -166,12 +166,11 @@
 }
 
 .filtro-acoes {
-
+    grid-column: 1 / -1;
+    display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 15px;
-    padding: 15px 20px;
-    border-top: 1px solid var(--cinzaBorda);
-    background: var(--branco);
 }
 
 /* Campos do Filtro */
@@ -292,7 +291,7 @@
 }
 
 .btn-new-ag:hover {
-    background-color: rgb(252, 238, 255);
+    background-color: var(--roxo-primary-hover);
 }
 
 .filtro-header div {
@@ -340,8 +339,15 @@
     gap: .5em;
     align-items: center;
     font-size: 14px;
+border: 1px solid var(--roxoPrincipal);
+    padding: 10px 20px;
+    border-radius: var(--borda-radius);
 }
 
+.clear-btn:hover {
+    
+    color: var(--roxo-primary-hover);
+}
 .filtro-body-clear {
     max-height: 0;
     overflow: hidden;

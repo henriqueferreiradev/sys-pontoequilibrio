@@ -25,6 +25,7 @@
         <table class="table">
           <thead>
             <tr>
+              <th>ID</th>
               <th>Nome</th>
               <th>CPF</th>
               <th>Celular</th>
@@ -38,9 +39,11 @@
           </thead>
           <tbody>
             {% for paciente in page_obj %}
+            
             <tr class="
               {% if not paciente.ativo %}inativo{% endif %}
               {% if paciente.pre_cadastro and not paciente.conferido %}linha-pendente{% endif %}">
+              <td>{{ paciente.id }}</td>
               <td>
                 <div class="tooltip-wrapper"
                      onmouseenter="mostrarPopupComDelay(this)"
