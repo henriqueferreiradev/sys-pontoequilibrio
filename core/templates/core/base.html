@@ -144,12 +144,12 @@
 
         {% if request.user.tipo != 'profissional' %}
         <li>
-          <a href="#">
+          <a href="{% url 'central' %}">
             <i class="fas fa-clipboard-list"></i>
-            <span class="link_name">Relatórios</span>
+            <span class="link_name">Central de Relatórios</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" href="#">Relatórios</a></li>
+            <li><a class="link_name" href="{% url 'central' %}">Central de Relatórios</a></li>
           </ul>
         </li>
 
@@ -415,9 +415,9 @@
           </a>
 
           {% if request.user.tipo != 'profissional' %}
-          <a href="#" class="mobile-menu-item-link">
+          <a href="{% url 'central' %}" class="mobile-menu-item-link">
             <i class="fas fa-clipboard-list"></i>
-            <span>Relatórios</span>
+            <span>Central de Relatórios</span>
           </a>
           {% endif %} {% if request.user.tipo != 'profissional' %}
           <a href="{% url 'auditoria_logs' %}" class="mobile-menu-item-link">

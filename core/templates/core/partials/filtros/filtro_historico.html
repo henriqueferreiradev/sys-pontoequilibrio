@@ -56,18 +56,14 @@
               />
             </div>
           </div>
-
+          <div class="filtro-acoes">
+            <a href="{% url 'agenda' %}" class="clear-btn"><i class="fa-solid fa-x"></i>Limpar</a>
+            <button type="submit" name="filtrar" value="1" class="btn btn-primary">
+            <i class="fa-solid fa-filter"></i>Procurar</button> 
+         </div>
           
       </div>
-  
-      <div class="filtro-acoes">
-       
-        <a href="{% url 'agenda' %}" class="btn btn-secondary"><i class='bx bx-reset'></i> Limpar</a>
-    
-            <button type="submit" name="filtrar" value="1" class="btn btn-primary">
-            <i class='bx bx-filter'></i> Aplicar Filtros
-            </button>
-      </div>
+ 
     </form>
   </div>
   

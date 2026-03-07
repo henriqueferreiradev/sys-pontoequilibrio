@@ -119,6 +119,10 @@
     cursor: pointer;
 }
 
+.filtro-header:hover {
+    background: var(--roxo-primary-hover);
+}
+
 .filtro-header h2 {
     font-size: 18px;
     font-weight: 600;
@@ -166,10 +170,10 @@
 }
 
 .filtro-acoes {
-    grid-column: 1 / -1;
+
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-end;
     gap: 15px;
 }
 
@@ -252,7 +256,7 @@
 
 /* Botões */
 .btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: var(--borda-radius);
     border: none;
     font-weight: 600;
@@ -261,6 +265,8 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    padding: 12px 24px;
+    height: 43px;
 }
 
 .btn-primary {
@@ -268,8 +274,14 @@
     color: white;
 }
 
+.btn-search {
+    background: var(--roxoPrincipal);
+    color: white;
+
+}
+
 .btn-primary:hover {
-    background: var(--roxoPrincipal-hover);
+    background: var(--roxo-primary-hover);
 }
 
 .btn-secondary {
@@ -335,19 +347,26 @@
 .clear-btn {
     display: flex;
     width: fit-content;
-    color: var(--roxoPrincipal);
+    color: white;
     gap: .5em;
     align-items: center;
     font-size: 14px;
-border: 1px solid var(--roxoPrincipal);
-    padding: 10px 20px;
+    background: var(--roxoPrincipal);
+
     border-radius: var(--borda-radius);
+    border: none;
+    font-weight: 600;
+    padding: 12px 24px;
+    height: 43px;
+
+
 }
 
 .clear-btn:hover {
-    
-    color: var(--roxo-primary-hover);
+    background: var(--roxo-primary-hover);
+
 }
+
 .filtro-body-clear {
     max-height: 0;
     overflow: hidden;
