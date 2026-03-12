@@ -1451,7 +1451,7 @@ class Despesa(models.Model):
         ('atrasado', 'Atrasado'),
     )
     fornecedor = models.ForeignKey(Fornecedor, on_delete=models.SET_NULL, null=True)
-    categoria = models.ForeignKey(CategoriaFinanceira, on_delete=models.SET_NULL, null=True, limit_choices_to={'tipo': 'despesa'})
+    categoria = models.ForeignKey(SubgrupoConta, on_delete=models.SET_NULL, null=True, limit_choices_to={'tipo': 'despesa'})
     descricao = models.CharField(max_length=255)
     vencimento = models.DateField()
     valor = models.DecimalField(max_digits=10, decimal_places=2)
@@ -1466,6 +1466,62 @@ class Despesa(models.Model):
     inicio = models.DateField(blank=True, null=True)
     termino = models.DateField(blank=True, null=True)
 
+    recorrente = models.BooleanField(default=False)
+    frequencia = models.CharField(max_length=20, blank=True, null=True, choices=[
+        ('semanal', 'Semanal'),
+        ('quinzenal', 'Quinzenal'),
+        ('mensal', 'Mensal'),
+        ('bimestral', 'Bimestral'),
+        ('trimestral', 'Trimestral'),
+        ('semestral', 'Semestral'),
+        ('anual', 'Anual'),
+    ])
+    tipo_recorrencia = models.CharField(max_length=10, blank=True, null=True, choices=[
+        ('meses', 'Por quantidade'),
+        ('data', 'Por data'),
+    ])
+    inicio_recorrencia = models.DateField(null=True, blank=True)
+    termino_recorrencia = models.DateField(null=True, blank=True)
+    qtd_ocorrencias = models.IntegerField(null=True, blank=True)
+    valor_total_recorrencia = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    @property
+    def status_visual(self):
+        hoje = date.today()
+
+        if self.status == 'pago':
+            return 'pago'
+
+        if self.vencimento < hoje:
+            return 'atrasado'
+
+        if self.vencimento == hoje:
+            return 'hoje'
+
+        if self.status == 'agendado':
+            return 'agendado'
+
+        return 'pendente'
+    
+    @property
+    def status_visual_label(self):
+        mapa = {
+            'pago': 'Pago',
+            'atrasado': 'Atrasado',
+            'hoje': 'Vence Hoje',
+            'agendado': 'Agendado',
+            'pendente': 'Pendente',
+        }
+        return mapa.get(self.status_visual, 'Pendente')
+    @property
+    def status_visual_classe(self):
+        mapa = {
+            'pago': 'badge-pago',
+            'atrasado': 'badge-atrasado',
+            'hoje': 'badge-hoje',
+            'agendado': 'badge-agendado',
+            'pendente': 'badge-pendente',
+        }
+        return mapa.get(self.status_visual, 'badge-pendente')
     def __str__(self):
         return f"{self.fornecedor} - {self.descricao} ({self.valor})"
 

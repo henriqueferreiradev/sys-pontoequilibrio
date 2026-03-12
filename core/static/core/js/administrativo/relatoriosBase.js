@@ -17,7 +17,7 @@
         try {
             const response = await fetch('/relatorios/api/listar/');
             const data = await response.json();
-            
+
             todosRelatorios = [];
             data.setores.forEach(setor => {
                 setor.relatorios.forEach(rel => {
@@ -31,7 +31,7 @@
                     });
                 });
             });
-            
+
             renderCards('');
         } catch (error) {
             console.error('Erro ao carregar relatórios:', error);
@@ -45,11 +45,11 @@
         const setoresMap = new Map();
 
         todosRelatorios.forEach(rel => {
-            if (filtro === '' || 
-                rel.nome.toLowerCase().includes(filtro) || 
+            if (filtro === '' ||
+                rel.nome.toLowerCase().includes(filtro) ||
                 rel.desc.toLowerCase().includes(filtro) ||
                 rel.setor.toLowerCase().includes(filtro)) {
-                
+
                 if (!setoresMap.has(rel.setor)) {
                     setoresMap.set(rel.setor, []);
                 }
@@ -104,7 +104,7 @@
                 const slug = this.dataset.slug;
                 const nome = this.dataset.nome;
                 const extra = JSON.parse(this.dataset.extra);
-                
+
                 abrirModal({
                     slug: slug,
                     nome: nome,
@@ -136,7 +136,7 @@
                 }
             });
         }
-        
+
         modalOverlay.classList.add('active');
     }
 
@@ -148,7 +148,7 @@
     // Função para coletar valores dos filtros
     function coletarValoresFiltros(extra) {
         const valores = {};
-        
+
         extra.forEach(campo => {
             const elemento = document.getElementById(`extra_${campo}`);
             if (elemento) {
@@ -159,7 +159,7 @@
                 }
             }
         });
-        
+
         return valores;
     }
 
@@ -169,7 +169,7 @@
 
         const dataInicio = dataInicioInput.value;
         const dataFim = dataFimInput.value;
-        
+
         if (!dataInicio || !dataFim) {
             alert('Preencha data inicial e final');
             return;
@@ -198,7 +198,7 @@
             });
 
             const data = await response.json();
-            
+
             if (data.error) {
                 alert('Erro: ' + data.error);
                 return;
@@ -206,7 +206,7 @@
 
             abrirPaginaResultados(currentReport, data);
             fecharModal();
-            
+
         } catch (error) {
             alert('Erro ao gerar relatório');
             console.error(error);
@@ -230,10 +230,10 @@
     }
 
     // Abre página com resultados
-function abrirPaginaResultados(report, data) {
-    const params = data.parametros || {};  // PEGA OS PARÂMETROS DA RESPOSTA
-    
-    let htmlContent = `
+    function abrirPaginaResultados(report, data) {
+        const params = data.parametros || {};  // PEGA OS PARÂMETROS DA RESPOSTA
+
+        let htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -248,7 +248,7 @@ function abrirPaginaResultados(report, data) {
             .total { background: #f0f0f0; padding: 0.5rem 1rem; border-radius: 40px; }
             table { width: 100%; border-collapse: collapse; }
             th { text-align: left; padding: 1rem; background: #f0f0f0; color: var(--roxoPrincipal); }
-            td { padding: 1rem; border-bottom: 1px solid #ddd; }
+            td { padding: .5rem; border-bottom: 1px solid #ddd; }
             .badge { background: var(--verdePrincipal); padding: 0.3rem 1rem; border-radius: 40px; }
             .btn-exportar { background: var(--roxoPrincipal); color: white; border: none; border-radius: 40px; padding: 0.5rem 1rem; cursor: pointer; margin-left: 0.5rem; }
             .btn-voltar { background: #6c757d; color: white; border: none; border-radius: 40px; padding: 0.5rem 1rem; cursor: pointer; }
@@ -271,39 +271,39 @@ function abrirPaginaResultados(report, data) {
             <table>
                 <thead>
                     <tr>`;
-    
-    // Cabeçalhos da tabela
-    if (data.dados && data.dados.length > 0) {
-        Object.keys(data.dados[0]).forEach(key => {
-            htmlContent += `<th>${key}</th>`;
-        });
-    } else {
-        htmlContent += '<th>Sem dados</th>';
-    }
-    
-    htmlContent += `</tr>
+
+        // Cabeçalhos da tabela
+        if (data.dados && data.dados.length > 0) {
+            Object.keys(data.dados[0]).forEach(key => {
+                htmlContent += `<th>${key}</th>`;
+            });
+        } else {
+            htmlContent += '<th>Sem dados</th>';
+        }
+
+        htmlContent += `</tr>
                 </thead>
                 <tbody>`;
-    
-    // Linhas da tabela
-    if (data.dados && data.dados.length > 0) {
-        data.dados.forEach(row => {
-            htmlContent += '<tr>';
-            Object.values(row).forEach(val => {
-                htmlContent += `<td>${val || '-'}</td>`;
+
+        // Linhas da tabela
+        if (data.dados && data.dados.length > 0) {
+            data.dados.forEach(row => {
+                htmlContent += '<tr>';
+                Object.values(row).forEach(val => {
+                    htmlContent += `<td>${val || '-'}</td>`;
+                });
+                htmlContent += '</tr>';
             });
-            htmlContent += '</tr>';
-        });
-    } else {
-        htmlContent += '<tr><td colspan="100" style="text-align:center;">Nenhum dado encontrado</td></tr>';
-    }
-    
-    // Cria uma string com os parâmetros para a URL
-    const paramsString = Object.keys(params)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key] || '')}`)
-        .join('&');
-    
-    htmlContent += `</tbody>
+        } else {
+            htmlContent += '<tr><td colspan="100" style="text-align:center;">Nenhum dado encontrado</td></tr>';
+        }
+
+        // Cria uma string com os parâmetros para a URL
+        const paramsString = Object.keys(params)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key] || '')}`)
+            .join('&');
+
+        htmlContent += `</tbody>
             </table>
             
             <div style="margin-top: 2rem; text-align: right; color: #666;">
@@ -323,10 +323,10 @@ function abrirPaginaResultados(report, data) {
     </html>
     `;
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-}
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    }
     // Event listeners
     btnCancelar.addEventListener('click', fecharModal);
     modalOverlay.addEventListener('click', (e) => {

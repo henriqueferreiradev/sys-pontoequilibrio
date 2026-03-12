@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // DATE PICKER (dia/mês/ano)
     const dateInputs = document.querySelectorAll('input[type="date"]');
-    if (!dateInputs.length) return;
 
     dateInputs.forEach(input => {
         flatpickr(input, {
@@ -10,8 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
             locale: flatpickr.l10ns.pt,
             disableMobile: true,
             onReady: (_, __, instance) => {
-                instance.altInput.placeholder = input.getAttribute("placeholder") || "Selecione uma data";
+                instance.altInput.placeholder =
+                    input.getAttribute("placeholder") || "Selecione uma data";
             }
         });
     });
+
+    // MONTH PICKER (mês/ano)
+    const monthInputs = document.querySelectorAll('input[type="month"]');
+
+    monthInputs.forEach(input => {
+        flatpickr(input, {
+            plugins: [
+                new monthSelectPlugin({
+                    shorthand: true,
+                    dateFormat: "Y-m",
+                    altFormat: "F Y"
+                })
+            ],
+            altInput: true,
+            locale: flatpickr.l10ns.pt,
+            disableMobile: true
+        });
+    });
+
 });

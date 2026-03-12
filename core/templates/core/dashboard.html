@@ -220,87 +220,95 @@
     
 </div> -->
 
-  <div class="section">
-  <h2>Visão Geral dos Atendimentos</h2>
-<div class="charts-row charts-row-1">
- 
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Atendimentos por dia (últimos 7 dias)</h3>
- 
-        </div>
-    <div  style="position: relative; width: 100%; max-width: 900px; margin: auto;" class="chart-canvas-container">
-        <canvas id="barChart"></canvas>
-    </div>
-
-    {{ chart_data|json_script:"chart-data" }}
-
-    </div>
+<div class="section">
+    <h2>Visão Geral dos Atendimentos</h2>
+    <div class="charts-row charts-row-1">
     
-    <!-- Chart 2 -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Evolução mensal de atendimentos</h3>
-
-        </div>
-        <div class="chart-canvas-container">
-            <canvas id="evolucaoMensalChart"></canvas>
-        </div>
-        {{ evolucao_mensal_data|json_script:'evolucao-chart' }}
-    </div>
-        <!-- Chart 3 -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Distribuição por profissional</h3>
-           
-        </div>
-        <div class="chart-canvas-container">
-            <canvas id="distribuicaoProfissionalChart"></canvas>
-            {{ distribuicao_por_profissional|json_script:'distribuicao_por_profissional-chart' }}
-        </div>
-    </div>
-</div>
-
-<!-- Charts Row 2 -->
-<div class="charts-row charts-row-2">
-
-    
-    <!-- Chart 4 -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Serviços mais contratados</h3>
-       
-        </div>
-        <div class="chart-canvas-container"  style="display: flex; align-items: center;">
-            <canvas id="servicosChart"></canvas>
-            {{ servicos_mais_contratados|json_script:'servicos-chart' }}
-        </div>
-    </div>
-    
-    <!-- Chart 5 -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Status dos agendamentos</h3>
- 
-        </div>
-        <div class="chart-canvas-container">
-            <canvas id="statusChart"></canvas>
-            {{ grafico_status_agendamentos|json_script:'status-chart' }}
-        </div>
-    </div>
         <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Formas de pagamento</h3>
- 
+            <div class="chart-header">
+                <h3 class="chart-title">Atendimentos por dia (últimos 7 dias)</h3>
+    
+            </div>
+        <div  style="position: relative; width: 100%; max-width: 900px; margin: auto;" class="chart-canvas-container">
+            <canvas id="barChart"></canvas>
         </div>
-        <div class="chart-canvas-container">
-            <canvas id="pagamentoChart"></canvas>
-            {{ grafico_formas_pagamento|json_script:'formas_pagamento-chart' }}
+
+        {{ chart_data|json_script:"chart-data" }}
+
+        </div>
+        
+        <!-- Chart 2 -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Evolução mensal de atendimentos</h3>
+
+            </div>
+            <div class="chart-canvas-container">
+                <canvas id="evolucaoMensalChart"></canvas>
+            </div>
+            {{ evolucao_mensal_data|json_script:'evolucao-chart' }}
+        </div>
+            <!-- Chart 3 -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Distribuição por profissional</h3>
+            
+            </div>
+            <div class="chart-canvas-container">
+                <canvas id="distribuicaoProfissionalChart"></canvas>
+                {{ distribuicao_por_profissional|json_script:'distribuicao_por_profissional-chart' }}
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Charts Row 2 -->
+    <div class="charts-row charts-row-2">
+
+        
+        <!-- Chart 4 -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Serviços mais contratados</h3>
+        
+            </div>
+            <div class="chart-canvas-container"  style="display: flex; align-items: center;">
+                <canvas id="servicosChart"></canvas>
+                {{ servicos_mais_contratados|json_script:'servicos-chart' }}
+            </div>
+        </div>
+        
+        <!-- Chart 5 -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Status dos agendamentos</h3>
+    
+            </div>
+            <div class="chart-canvas-container">
+                <canvas id="statusChart"></canvas>
+                {{ grafico_status_agendamentos|json_script:'status-chart' }}
+            </div>
+        </div>
+            <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Formas de pagamento</h3>
+    
+            </div>
+            <div class="chart-canvas-container">
+                <canvas id="pagamentoChart"></canvas>
+                {{ grafico_formas_pagamento|json_script:'formas_pagamento-chart' }}
+            </div>
+        </div>
+    </div>
+
+
 </div>
  
+<div class="section">
+    <h2>Aniversariantes da semana</h2>
+    
+
+</div>
+
 
 </div>
 

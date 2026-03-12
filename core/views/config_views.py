@@ -501,18 +501,60 @@ def configuracao_view(request):
 
                         servico_id = request.POST.get('servico_id')
                         nome = request.POST.get('nome')
-                        valor = request.POST.get('valor')
+                        valor_str = request.POST.get('valor', '').replace(',', '.')
+                        valor = float(valor_str) if valor_str else None
                         qtd_sessoes = request.POST.get('qtd_sessoes')
-
+                        conta_codigo = request.POST.get('conta_codigo')  # Adicione esta linha
                         try:
                             servico = Servico.objects.get(id=servico_id)
+
+                            conta_contabil = None
+                            if conta_codigo and conta_codigo.strip():
+                                try:
+                                    # Formatar o código
+                                    if len(conta_codigo) >= 3:
+                                        tipo_codigo = conta_codigo[0]  # R ou D
+                                        grupo_codigo = conta_codigo[1]  # primeiro dígito do grupo
+                                        subgrupo_codigo = conta_codigo[2:]  # restante para subgrupo
+                                        codigo_formatado = f"{tipo_codigo}.{grupo_codigo}.{subgrupo_codigo}"
+                                    else:
+                                        codigo_formatado = conta_codigo
+                                    
+                                    # Buscar a conta
+                                    conta_contabil = SubgrupoConta.objects.get(
+                                        codigo_completo=codigo_formatado,
+                                        ativo=True
+                                    )
+                                except SubgrupoConta.DoesNotExist:
+                                    # Tentar buscar sem formatação
+                                    try:
+                                        conta_contabil = SubgrupoConta.objects.get(
+                                            codigo_completo=conta_codigo,
+                                            ativo=True
+                                        )
+                                    except SubgrupoConta.DoesNotExist:
+                                        return JsonResponse({
+                                            'success': False, 
+                                            'message': f'Conta contábil não encontrada: {conta_codigo}'
+                                        })
+                                except Exception as e:
+                                    print(f"Erro ao buscar conta: {e}")
+                                    # Continuar sem conta, não quebrar a edição
+                            
                             servico.nome = nome
                             servico.valor = valor
                             servico.qtd_sessoes = qtd_sessoes
+                            if conta_codigo:
+                                servico.conta_contabil = conta_contabil
+                            elif conta_codigo == '':
+                                servico.conta_contabil = None
+                            servico.save()
+
+
                             return JsonResponse({'success': True})
                         except Exception as e:
                             return JsonResponse({'success': False, 'error': str(e)})
-        '''             
+        '''           
         =====================================================================================
                                             INATIVAÇÃO
         =====================================================================================

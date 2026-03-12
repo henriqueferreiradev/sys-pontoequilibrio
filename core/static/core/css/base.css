@@ -350,6 +350,13 @@ textarea {
   gap: 15px;
 }
 
+.topbar-div i {
+  background: var(--roxoPrincialGradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1em;
+}
 
 .search-form {
   margin-left: 20px;
@@ -1227,19 +1234,19 @@ textarea {
 }
 
 .empty-state {
-    padding: var(--espaco-xl) var(--espaco-md);
-    text-align: center;
-    color: var(--cinza-medio);
+  padding: var(--espaco-xl) var(--espaco-md);
+  text-align: center;
+  color: var(--cinza-medio);
 }
 
 .empty-icon {
-    font-size: 3rem;
-    color: var(--cinza-borda);
-    margin-bottom: var(--espaco-sm);
+  font-size: 3rem;
+  color: var(--cinza-borda);
+  margin-bottom: var(--espaco-sm);
 }
 
 .empty-title {
-    font-size: 1.2rem;
-    margin-bottom: var(--espaco-xs);
-    color: var(--cinza-escuro);
+  font-size: 1.2rem;
+  margin-bottom: var(--espaco-xs);
+  color: var(--cinza-escuro);
 }

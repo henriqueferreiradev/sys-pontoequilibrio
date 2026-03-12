@@ -3,7 +3,7 @@
 // ================================================
 
 // Elementos DOM
-const modalOverlay = document.getElementById('modalOverlay');
+const modalOverlay = document.getElementById('modalPlanoContas');
 const openModalBtn = document.querySelector('.open-modal-btn');
 const closeBtn = document.querySelector('.close-btn');
 const cancelBtn = document.getElementById('cancelBtn');
@@ -160,6 +160,7 @@ function mostrarErro(mensagem) {
 }
 
 // Função para renderizar a árvore de contas
+// Função para renderizar a árvore de contas
 function renderAccountTree(planoContas) {
     accountTree.innerHTML = '';
 
@@ -175,7 +176,9 @@ function renderAccountTree(planoContas) {
         return;
     }
 
-    // Adicionar RECEITAS se existirem
+    // ─────────────────────────────────────────────────────────
+    // RECEITAS
+    // ─────────────────────────────────────────────────────────
     if (planoContas.centros_de_custo.receitas && Object.keys(planoContas.centros_de_custo.receitas).length > 0) {
         const receitasHeader = document.createElement('div');
         receitasHeader.className = 'category-header';
@@ -185,11 +188,10 @@ function renderAccountTree(planoContas) {
         `;
         accountTree.appendChild(receitasHeader);
 
-        // Renderizar contas de receitas
         Object.entries(planoContas.centros_de_custo.receitas).forEach(([codigo, grupo]) => {
             const grupoId = `receita-${codigo}`;
 
-            // Item do grupo principal
+            // ---- Grupo (pai) ----
             const grupoDiv = document.createElement('div');
             grupoDiv.className = 'account-item';
             grupoDiv.setAttribute('data-tipo', 'receita');
@@ -211,12 +213,12 @@ function renderAccountTree(planoContas) {
                 <span class="account-badge badge-receita">Receita</span>
             `;
 
-            // Container para subitens
+            // Container para os filhos
             const subItensContainer = document.createElement('div');
             subItensContainer.className = 'children';
             subItensContainer.id = `children-${grupoId}`;
 
-            // Adicionar subitens
+            // ---- Subitens (filhos) ----
             if (grupo.subgrupos) {
                 Object.entries(grupo.subgrupos).forEach(([subcodigo, descricao]) => {
                     const subItemDiv = document.createElement('div');
@@ -233,12 +235,12 @@ function renderAccountTree(planoContas) {
                         <span class="account-icon file-icon">
                             <i class="fas fa-file-invoice"></i>
                         </span>
-                        <span class="account-code">${subcodigo}</span>
+                        <span class="account-code">R.${subcodigo}</span>
                         <span class="account-name">${descricao}</span>
                         <span class="account-badge badge-receita">Receita</span>
                     `;
 
-                    // Evento de clique para subitens
+                    // Evento de clique para selecionar a conta (apenas nos filhos)
                     subItemContent.addEventListener('click', (e) => {
                         e.stopPropagation();
                         selectAccount({
@@ -255,29 +257,19 @@ function renderAccountTree(planoContas) {
                 });
             }
 
-            // Evento de clique para o grupo
+            // ✅ Evento de clique no GRUPO: expande/recolhe (NÃO seleciona)
             grupoContent.addEventListener('click', (e) => {
                 e.stopPropagation();
-                selectAccount({
-                    tipo: 'receita',
-                    codigo: `R${codigo}`,
-                    codigo_display: codigo,
-                    descricao: grupo.descricao,
-                    grupo: grupo.descricao
-                }, grupoContent);
-            });
+                console.log('Clique no grupo detectado para', codigo);
+                const children = subItensContainer;
+                const icon = grupoContent.querySelector('.toggle-icon i');
 
-            // Evento para expandir/colapsar (apenas no ícone de toggle)
-            const toggleIcon = grupoContent.querySelector('.toggle-icon');
-            toggleIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const childrenContainer = subItensContainer;
-                if (childrenContainer.classList.contains('expanded')) {
-                    childrenContainer.classList.remove('expanded');
-                    toggleIcon.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                if (children.classList.contains('expanded')) {
+                    children.classList.remove('expanded');
+                    icon.className = 'fas fa-chevron-right';
                 } else {
-                    childrenContainer.classList.add('expanded');
-                    toggleIcon.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                    children.classList.add('expanded');
+                    icon.className = 'fas fa-chevron-down';
                 }
             });
 
@@ -287,7 +279,9 @@ function renderAccountTree(planoContas) {
         });
     }
 
-    // Adicionar DESPESAS se existirem
+    // ─────────────────────────────────────────────────────────
+    // DESPESAS
+    // ─────────────────────────────────────────────────────────
     if (planoContas.centros_de_custo.despesas && Object.keys(planoContas.centros_de_custo.despesas).length > 0) {
         const despesasHeader = document.createElement('div');
         despesasHeader.className = 'category-header';
@@ -297,11 +291,10 @@ function renderAccountTree(planoContas) {
         `;
         accountTree.appendChild(despesasHeader);
 
-        // Renderizar contas de despesas
         Object.entries(planoContas.centros_de_custo.despesas).forEach(([codigo, grupo]) => {
             const grupoId = `despesa-${codigo}`;
 
-            // Item do grupo principal
+            // ---- Grupo (pai) ----
             const grupoDiv = document.createElement('div');
             grupoDiv.className = 'account-item';
             grupoDiv.setAttribute('data-tipo', 'despesa');
@@ -323,12 +316,12 @@ function renderAccountTree(planoContas) {
                 <span class="account-badge badge-despesa">Despesa</span>
             `;
 
-            // Container para subitens
+            // Container para os filhos
             const subItensContainer = document.createElement('div');
             subItensContainer.className = 'children';
             subItensContainer.id = `children-${grupoId}`;
 
-            // Adicionar subitens
+            // ---- Subitens (filhos) ----
             if (grupo.subgrupos) {
                 Object.entries(grupo.subgrupos).forEach(([subcodigo, descricao]) => {
                     const subItemDiv = document.createElement('div');
@@ -345,12 +338,12 @@ function renderAccountTree(planoContas) {
                         <span class="account-icon file-icon">
                             <i class="fas fa-file-invoice"></i>
                         </span>
-                        <span class="account-code">${subcodigo}</span>
+                        <span class="account-code">D.${subcodigo}</span>
                         <span class="account-name">${descricao}</span>
                         <span class="account-badge badge-despesa">Despesa</span>
                     `;
 
-                    // Evento de clique para subitens
+                    // Evento de clique para selecionar a conta (apenas nos filhos)
                     subItemContent.addEventListener('click', (e) => {
                         e.stopPropagation();
                         selectAccount({
@@ -367,29 +360,18 @@ function renderAccountTree(planoContas) {
                 });
             }
 
-            // Evento de clique para o grupo
+            // ✅ Evento de clique no GRUPO: expande/recolhe (NÃO seleciona)
             grupoContent.addEventListener('click', (e) => {
                 e.stopPropagation();
-                selectAccount({
-                    tipo: 'despesa',
-                    codigo: `D${codigo}`,
-                    codigo_display: codigo,
-                    descricao: grupo.descricao,
-                    grupo: grupo.descricao
-                }, grupoContent);
-            });
+                const children = subItensContainer;
+                const icon = grupoContent.querySelector('.toggle-icon i');
 
-            // Evento para expandir/colapsar (apenas no ícone de toggle)
-            const toggleIcon = grupoContent.querySelector('.toggle-icon');
-            toggleIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const childrenContainer = subItensContainer;
-                if (childrenContainer.classList.contains('expanded')) {
-                    childrenContainer.classList.remove('expanded');
-                    toggleIcon.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                if (children.classList.contains('expanded')) {
+                    children.classList.remove('expanded');
+                    icon.className = 'fas fa-chevron-right';
                 } else {
-                    childrenContainer.classList.add('expanded');
-                    toggleIcon.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                    children.classList.add('expanded');
+                    icon.className = 'fas fa-chevron-down';
                 }
             });
 
@@ -399,7 +381,6 @@ function renderAccountTree(planoContas) {
         });
     }
 }
-
 // Função para selecionar uma conta
 function selectAccount(accountData, element) {
     // Remover seleção anterior

@@ -255,16 +255,35 @@
                                     <input type="text" class="edit-input" value="{{ servico.valor }}"
                                         style="display: none;">
                                 </td>
-                                <td data-model="servico">
-                                    <span class="display-text">{{ servico.conta_contabil }}</span>
-                                    <input type="text" class="edit-input" value="{{ servico.conta_contabil }}"
-                                        style="display: none;">
+                                <td data-model="servico" data-field="conta_codigo" data-id='{{servico.id}}' class="editable">
+                                    <!-- Display normal -->
+                                    <span class="display-text conta-display">
+                                        {{ servico.conta_contabil|default:"Nenhuma conta selecionada" }}
+                                    </span>
+                                    
+                                    <!-- Campo de edição (inicialmente oculto) -->
+                                    <div class="edit-conta-container" style="display: none; width: 100%;">
+                                        <input type="text" 
+                                            class="edit-input edit-conta-desc input-field" 
+                                            readonly 
+                                            placeholder="Nenhuma conta selecionada"
+                                            value="{% if servico.conta_contabil %}{{ servico.conta_contabil.codigo_completo|default:servico.conta_contabil }} - {{ servico.conta_contabil.descricao|default:'' }}{% endif %}">
+                                        <input type="hidden" 
+                                            class="edit-conta-codigo" 
+                                            value="{% if servico.conta_contabil %}{{ servico.conta_contabil.codigo_completo }}{% endif %}">
+                                        <button type="button" 
+                                                class="btn btn-primary btn-sm"
+                                                onclick="abrirModalSelecaoConta(this)">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </td>
                                 <td>
                                     <span class="status-badge {% if servico.ativo %}active{% else %}inactive{% endif %}">
                                         {{ servico.ativo|yesno:"Ativo,Inativo" }}
                                     </span>
                                 </td>
+
                                 <td>
                                     <div class="acoes-cell">
                                         <button class="btn-acao salvar" title="Salvar" style="display: none;"

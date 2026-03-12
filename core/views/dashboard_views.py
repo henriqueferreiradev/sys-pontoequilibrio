@@ -303,6 +303,12 @@ def dashboard_view(request):
     paginator = Paginator(agendamentos, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+
+    aniversariantes_semana = Paciente.objects.filter(data_nascimento__gte=inicio_semana, data_nascimento__lte=fim_semana)
+    for a in aniversariantes_semana:
+        print(a.nome, a.data_nascimento)
+
     context = {
         'agendamentos':agendamentos,
         'faltas_dia': faltas_dia,
@@ -325,6 +331,7 @@ def dashboard_view(request):
         'variacao_finalizadas':variacao_finalizadas,
         'variacao_pendentes': variacao_pendentes,
         'page_obj': page_obj,
+        'aniversariantes_semana':aniversariantes_semana
 
     }
     return render(request, 'core/dashboard.html', context)

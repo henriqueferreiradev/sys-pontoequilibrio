@@ -100,3 +100,6 @@ def criar_pagamento(*, receita, paciente, pacote, agendamento, valor, forma_paga
 
     receita.atualizar_status_por_pagamentos()
     return pagamento
+
+
+ 

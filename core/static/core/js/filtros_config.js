@@ -4,7 +4,7 @@
 // ============================================
 
 const FILTROS_CONFIG = {
-    
+
     // ===== FILTROS DO PACIENTE =====
     'sexo': {
         tipo: 'select',
@@ -17,7 +17,7 @@ const FILTROS_CONFIG = {
             { valor: 'prefiro não informar', rotulo: 'Prefiro não informar' }
         ]
     },
-    
+
     'estado_civil': {
         tipo: 'select',
         label: 'Estado Civil',
@@ -30,7 +30,7 @@ const FILTROS_CONFIG = {
             { valor: 'uniao estavel', rotulo: 'União Estável' }
         ]
     },
-    
+
     'cor_raca': {
         tipo: 'select',
         label: 'Cor/Raça',
@@ -44,7 +44,7 @@ const FILTROS_CONFIG = {
             { valor: 'prefiro não informar', rotulo: 'Prefiro não informar' }
         ]
     },
-    
+
     'uf': {
         tipo: 'select',
         label: 'UF',
@@ -79,7 +79,7 @@ const FILTROS_CONFIG = {
             { valor: 'TO', rotulo: 'Tocantins' }
         ]
     },
-    
+
     'midia': {
         tipo: 'select',
         label: 'Como conheceu a clínica',
@@ -95,7 +95,7 @@ const FILTROS_CONFIG = {
             { valor: 'outro', rotulo: 'Outro' }
         ]
     },
-    
+
     'vinculo': {
         tipo: 'select',
         label: 'Vínculo com Emergência',
@@ -124,7 +124,7 @@ const FILTROS_CONFIG = {
             { valor: 'outro', rotulo: 'Outro' }
         ]
     },
-    
+
     'faixa_etaria': {
         tipo: 'select',
         label: 'Faixa Etária',
@@ -137,7 +137,7 @@ const FILTROS_CONFIG = {
             { valor: 'idoso', rotulo: 'Idoso (60+)' }
         ]
     },
-    
+
     'status_paciente': {
         tipo: 'select',
         label: 'Status do Paciente',
@@ -147,7 +147,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Inativo' }
         ]
     },
-    
+
     'pre_cadastro': {
         tipo: 'select',
         label: 'Pré-cadastro',
@@ -157,7 +157,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não' }
         ]
     },
-    
+
     'conferido': {
         tipo: 'select',
         label: 'Dados Conferidos',
@@ -167,7 +167,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não' }
         ]
     },
-    
+
     'consentimento_lgpd': {
         tipo: 'select',
         label: 'Consentimento LGPD',
@@ -177,7 +177,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não consentiu' }
         ]
     },
-    
+
     'nf_reembolso_plano': {
         tipo: 'select',
         label: 'Solicita NF para Reembolso',
@@ -187,7 +187,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não' }
         ]
     },
-    
+
     'nf_imposto_renda': {
         tipo: 'select',
         label: 'Solicita NF para IR',
@@ -197,31 +197,31 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não' }
         ]
     },
-    
+
     'cidade': {
         tipo: 'text',
         label: 'Cidade',
         placeholder: 'Digite o nome da cidade'
     },
-    
+
     'bairro': {
         tipo: 'text',
         label: 'Bairro',
         placeholder: 'Digite o nome do bairro'
     },
-    
+
     'profissao': {
         tipo: 'text',
         label: 'Profissão',
         placeholder: 'Digite a profissão'
     },
-    
+
     'naturalidade': {
         tipo: 'text',
         label: 'Naturalidade',
         placeholder: 'Digite a naturalidade'
     },
-    
+
     // ===== FILTROS DE PROFISSIONAL =====
     'conselho': {
         tipo: 'select',
@@ -236,14 +236,14 @@ const FILTROS_CONFIG = {
             { valor: 'cra', rotulo: 'CRA' }
         ]
     },
-    
+
     'especialidade': {
         tipo: 'dynamic_select',
         label: 'Especialidade',
         endpoint: '/api/especialidades/',  // Você precisa criar esse endpoint
         opcoes: []  // Será preenchido via AJAX
     },
-    
+
     'tipo_funcionario': {
         tipo: 'select',
         label: 'Tipo de Funcionário',
@@ -254,7 +254,7 @@ const FILTROS_CONFIG = {
             { valor: 'parceiro', rotulo: 'Parceiro' }
         ]
     },
-    
+
     'status_profissional': {
         tipo: 'select',
         label: 'Status do Profissional',
@@ -264,7 +264,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Inativo' }
         ]
     },
-    
+
     // ===== FILTROS DE AGENDAMENTO =====
     'status_agendamento': {
         tipo: 'select',
@@ -280,42 +280,42 @@ const FILTROS_CONFIG = {
             { valor: 'desistencia', rotulo: 'Desistência' }
         ]
     },
-    
+
     'profissional': {
         tipo: 'dynamic_select',
         label: 'Profissional',
         endpoint: '/api/profissionais/',  // Precisa criar
         opcoes: []
     },
-    
+
     'profissional_1': {
         tipo: 'dynamic_select',
         label: 'Profissional Principal',
         endpoint: '/api/profissionais/',
         opcoes: []
     },
-    
+
     'profissional_2': {
         tipo: 'dynamic_select',
         label: 'Profissional Auxiliar',
         endpoint: '/api/profissionais/',
         opcoes: []
     },
-    
+
     'ambiente': {
         tipo: 'dynamic_select',
         label: 'Sala/Ambiente',
         endpoint: '/api/salas/',  // Precisa criar
         opcoes: []
     },
-    
+
     'servico': {
         tipo: 'dynamic_select',
         label: 'Serviço',
         endpoint: '/api/servicos/',  // Precisa criar
         opcoes: []
     },
-    
+
     // ===== FILTROS DE PACOTES =====
     'tipo_reposicao': {
         tipo: 'select',
@@ -327,7 +327,7 @@ const FILTROS_CONFIG = {
             { valor: 'fcr', rotulo: 'Reposição FCR' }
         ]
     },
-    
+
     'eh_reposicao': {
         tipo: 'select',
         label: 'É Pacote de Reposição?',
@@ -337,7 +337,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Não' }
         ]
     },
-    
+
     'pacote_ativo': {
         tipo: 'select',
         label: 'Pacote Ativo',
@@ -347,7 +347,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Inativo' }
         ]
     },
-    
+
     // ===== FILTROS FINANCEIROS =====
     'forma_pagamento': {
         tipo: 'select',
@@ -362,7 +362,7 @@ const FILTROS_CONFIG = {
             { valor: 'boleto', rotulo: 'Boleto' }
         ]
     },
-    
+
     'status_pagamento': {
         tipo: 'select',
         label: 'Status do Pagamento',
@@ -374,7 +374,7 @@ const FILTROS_CONFIG = {
             { valor: 'atrasado', rotulo: 'Atrasado' }
         ]
     },
-    
+
     'status_receita': {
         tipo: 'select',
         label: 'Status da Receita',
@@ -386,7 +386,7 @@ const FILTROS_CONFIG = {
             { valor: 'cancelada', rotulo: 'Cancelada' }
         ]
     },
-    
+
     'status_despesa': {
         tipo: 'select',
         label: 'Status da Despesa',
@@ -398,28 +398,28 @@ const FILTROS_CONFIG = {
             { valor: 'atrasado', rotulo: 'Atrasado' }
         ]
     },
-    
+
     'categoria_financeira': {
         tipo: 'dynamic_select',
         label: 'Categoria Financeira',
         endpoint: '/api/categorias-financeiras/',  // Precisa criar
         opcoes: []
     },
-    
+
     'conta_contabil': {
         tipo: 'dynamic_select',
         label: 'Conta Contábil',
         endpoint: '/api/contas-contabeis/',  // Precisa criar
         opcoes: []
     },
-    
+
     'fornecedor': {
         tipo: 'dynamic_select',
         label: 'Fornecedor',
         endpoint: '/api/fornecedores/',  // Precisa criar
         opcoes: []
     },
-    
+
     // ===== FILTROS DE FREQUÊNCIA =====
     'status_frequencia': {
         tipo: 'select',
@@ -433,7 +433,7 @@ const FILTROS_CONFIG = {
             { valor: 'indefinido', rotulo: 'Indefinido' }
         ]
     },
-    
+
     'mes': {
         tipo: 'select',
         label: 'Mês',
@@ -453,7 +453,7 @@ const FILTROS_CONFIG = {
             { valor: '12', rotulo: 'Dezembro' }
         ]
     },
-    
+
     'ano': {
         tipo: 'number',
         label: 'Ano',
@@ -461,7 +461,7 @@ const FILTROS_CONFIG = {
         max: 2030,
         valor_padrao: 2026
     },
-    
+
     'fechado': {
         tipo: 'select',
         label: 'Mês Fechado',
@@ -471,7 +471,7 @@ const FILTROS_CONFIG = {
             { valor: 'false', rotulo: 'Aberto' }
         ]
     },
-    
+
     // ===== FILTROS GERAIS =====
     'dias': {
         tipo: 'number',
@@ -480,7 +480,7 @@ const FILTROS_CONFIG = {
         max: 999,
         valor_padrao: 30
     },
-    
+
     'periodo_cadastro': {
         tipo: 'select',
         label: 'Período de Cadastro',
@@ -493,30 +493,51 @@ const FILTROS_CONFIG = {
             { valor: 'ano', rotulo: 'Este ano' }
         ]
     },
-    
+
     'data_inicio': {
         tipo: 'date',
         label: 'Data Início'
     },
-    
+
     'data_fim': {
         tipo: 'date',
         label: 'Data Fim'
     },
-    
+
     'valor_minimo': {
         tipo: 'number',
         label: 'Valor Mínimo (R$)',
         min: 0,
         step: 0.01
     },
-    
+
     'valor_maximo': {
         tipo: 'number',
         label: 'Valor Máximo (R$)',
         min: 0,
         step: 0.01
-    }
+    },
+    'ordenar_por': {
+        tipo: 'select',
+        label: 'Ordenar por',
+        opcoes: [
+            { valor: '', rotulo: 'Padrão' },
+            { valor: 'nome', rotulo: 'Nome' },
+            { valor: 'data_cadastro', rotulo: 'Data de Cadastro' },
+            { valor: 'data_nascimento', rotulo: 'Data de Nascimento' },
+            { valor: 'aniversario', rotulo: 'Data de Aniversário (mês/dia)' },
+            { valor: 'cidade', rotulo: 'Cidade' }
+        ]
+    },
+
+    'ordem': {
+        tipo: 'select',
+        label: 'Ordem',
+        opcoes: [
+            { valor: 'asc', rotulo: 'Crescente' },
+            { valor: 'desc', rotulo: 'Decrescente' }
+        ]
+    },
 };
 
 // ============================================
@@ -524,7 +545,7 @@ const FILTROS_CONFIG = {
 // ============================================
 
 const SUGESTOES_FILTROS = {
-    
+
     'paciente': {
         'basico': ['sexo', 'estado_civil', 'cidade', 'bairro'],
         'cadastro': ['status_paciente', 'pre_cadastro', 'conferido', 'periodo_cadastro'],
@@ -532,10 +553,10 @@ const SUGESTOES_FILTROS = {
         'consentimentos': ['consentimento_lgpd', 'nf_reembolso_plano', 'nf_imposto_renda'],
         'origem': ['midia', 'uf', 'naturalidade'],
         'emergencia': ['vinculo', 'nomeEmergencia'],
-        'completo': ['sexo', 'estado_civil', 'cor_raca', 'uf', 'cidade', 'bairro', 
-                     'midia', 'status_paciente', 'faixa_etaria']
+        'completo': ['sexo', 'estado_civil', 'cor_raca', 'uf', 'cidade', 'bairro',
+            'midia', 'status_paciente', 'faixa_etaria']
     },
-    
+
     'profissional': {
         'basico': ['sexo', 'estado_civil', 'cidade', 'especialidade'],
         'cadastro': ['status_profissional', 'data_cadastro'],
@@ -543,7 +564,7 @@ const SUGESTOES_FILTROS = {
         'contato': ['telefone', 'celular', 'email'],
         'remuneracao': ['valor_hora', 'tipo_funcionario']
     },
-    
+
     'agendamento': {
         'basico': ['data_inicio', 'data_fim', 'status_agendamento'],
         'profissionais': ['profissional_1', 'profissional_2'],
@@ -551,24 +572,26 @@ const SUGESTOES_FILTROS = {
         'servico': ['servico', 'especialidade'],
         'pacote': ['pacote', 'tipo_reposicao']
     },
-    
+
     'financeiro': {
         'receitas': ['data_inicio', 'data_fim', 'status_receita', 'forma_pagamento'],
         'despesas': ['data_inicio', 'data_fim', 'status_despesa', 'categoria_financeira'],
         'contas': ['conta_contabil', 'fornecedor'],
         'valores': ['valor_minimo', 'valor_maximo']
     },
-    
+
     'frequencia': {
         'basico': ['mes', 'ano', 'status_frequencia'],
         'detalhado': ['fechado', 'percentual_minimo', 'freq_sistema_minima']
     },
-    
+
     'pacote': {
         'basico': ['data_inicio', 'pacote_ativo', 'tipo_reposicao'],
         'valores': ['valor_minimo', 'valor_maximo'],
         'sessoes': ['qtd_sessoes', 'sessoes_restantes']
-    }
+    },
+
+
 };
 
 // ============================================
@@ -577,7 +600,7 @@ const SUGESTOES_FILTROS = {
 
 function renderizarFiltro(campo, valorAtual = '') {
     const config = FILTROS_CONFIG[campo];
-    
+
     if (!config) {
         console.warn(`Filtro "${campo}" não configurado`);
         return `<div class="campo-group">
@@ -585,12 +608,12 @@ function renderizarFiltro(campo, valorAtual = '') {
             <input type="text" id="extra_${campo}" value="${valorAtual}">
         </div>`;
     }
-    
+
     let html = `<div class="campo-group"><label>${config.label}</label>`;
-    
+
     if (config.tipo === 'select' || config.tipo === 'dynamic_select') {
         html += `<select id="extra_${campo}" class="filtro-select">`;
-        
+
         if (config.opcoes && config.opcoes.length > 0) {
             config.opcoes.forEach(op => {
                 const selected = op.valor == valorAtual ? 'selected' : '';
@@ -599,9 +622,9 @@ function renderizarFiltro(campo, valorAtual = '') {
         } else {
             html += `<option value="">Selecione...</option>`;
         }
-        
+
         html += `</select>`;
-        
+
         // Se for dinâmico, carrega opções via AJAX
         if (config.tipo === 'dynamic_select' && config.endpoint) {
             setTimeout(() => carregarOpcoesDinamicas(campo, config.endpoint, valorAtual), 100);
@@ -625,7 +648,7 @@ function renderizarFiltro(campo, valorAtual = '') {
     else if (config.tipo === 'checkbox') {
         html += `<input type="checkbox" id="extra_${campo}" ${valorAtual ? 'checked' : ''}>`;
     }
-    
+
     html += `</div>`;
     return html;
 }
@@ -638,7 +661,7 @@ function carregarOpcoesDinamicas(campo, endpoint, valorSelecionado) {
             if (select) {
                 // Limpa opções existentes
                 select.innerHTML = '<option value="">Selecione...</option>';
-                
+
                 // Adiciona novas opções
                 data.forEach(item => {
                     const option = document.createElement('option');
@@ -667,4 +690,3 @@ window.renderizarFiltro = renderizarFiltro;
 
 
 
- 

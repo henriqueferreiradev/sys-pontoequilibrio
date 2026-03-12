@@ -140,6 +140,9 @@ urlpatterns = [
     path('financeiro/folha-pagamento', financeiro_views.folha_pagamento_view, name='folha_pagamento'),
     path('financeiro/relatorios', financeiro_views.relatorios_view, name='financeiro_relatorios'),
     path('financeiro/receita/<int:receita_id>/pagamentos/', pacientes_views.pagamentos_receita, name='pagamentos_receita'),
+    path('financeiro/contas-pagar/nova/', financeiro_views.criar_nova_despesa),
+
+
 
     path('api/notificacoes/', notificacoes_views.listar_notificacoes, name='listar_notificacoes'),
     path('administrativo/dashboard/', administrativo_views.dashboard, name="dashboard_adm"),

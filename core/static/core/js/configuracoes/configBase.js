@@ -883,7 +883,7 @@ function preSelecionarConta(codigo, descricao) {
 
 
 // Elementos DOM
-const modalOverlay = document.getElementById('modalOverlay');
+const modalOverlay = document.getElementById('modalPlanoContas');
 const openModalBtn = document.querySelector('.open-modal-btn');
 const closeBtn = document.querySelector('.close-btn');
 const cancelBtn = document.getElementById('cancelBtn');

@@ -773,7 +773,7 @@
       <div class="kpi-content">
         <div class="kpi-text">
           <div class="kpi-title">Total a Pagar</div>
-          <div class="kpi-value">R$ 15.230,00</div>
+          <div class="kpi-value">{{ total_a_pagar }}</div>
           <div class="kpi-trend trend-up">
             <i class="fa-solid fa-arrow-up"></i>
             <span>+5% vs mês anterior</span>
@@ -887,20 +887,24 @@
               <th>Fornecedor</th>
               <th>Descrição</th>
               <th>Categoria</th>
+              <th>Centro de Custo</th>
               <th class="text-right">Valor</th>
               <th>Status</th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Atrasado -->
-            <tr class="row-status atrasado">
-              <td><span class="valor-atrasado">05/05/2023</span></td>
-              <td>Aluguel do Prédio</td>
-              <td>Aluguel Maio/2023</td>
+            {% for despesa in page_obj %}
+            <tr class="row-status {{despesa.status_visual }}">
+              
+              <td><span class="valor-{{despesa.status_visual }}">{{despesa.vencimento}}</span></td>
+              <td>{{ despesa.fornecedor.razao_social}}</td>
+              <td>{{ despesa.descricao }}</td>
               <td><span class="badge badge-category">Aluguel</span></td>
-              <td class="text-right"><strong class="valor-atrasado">R$ 5.000,00</strong></td>
-              <td><span class="badge badge-atrasado"><i class="fa-solid fa-clock"></i> Atrasado</span></td>
+              <td class="text-right"><strong class="valor-{{despesa.status_visual }}">{{despesa.categoria.codigo_completo}} - {{despesa.categoria.descricao}} </strong></td>
+              <td class="text-right"><strong class="valor-{{despesa.status_visual }}">{{despesa.valor}}</strong></td>
+              
+              <td><span class="badge badge-{{despesa.status_visual }}"><i class="fa-solid fa-clock"></i>{{despesa.status_visual_label}}</span></td>
               <td class="text-center">
                 <div class="action-buttons">
                   <button class="btn btn-success btn-icon" title="Registrar Pagamento">
@@ -915,130 +919,15 @@
                 </div>
               </td>
             </tr>
-
-            <!-- Atrasado -->
-            <tr class="row-status atrasado">
-              <td><span class="valor-atrasado">10/05/2023</span></td>
-              <td>Energia Elétrica</td>
-              <td>Fatura Abril/2023</td>
-              <td><span class="badge badge-category">Energia</span></td>
-              <td class="text-right"><strong class="valor-atrasado">R$ 850,00</strong></td>
-              <td><span class="badge badge-atrasado"><i class="fa-solid fa-clock"></i> Atrasado</span></td>
-              <td class="text-center">
-                <div class="action-buttons">
-                  <button class="btn btn-success btn-icon" title="Registrar Pagamento">
-                    <i class="fa-solid fa-money-bill"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Editar">
-                    <i class="fa-solid fa-pencil"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Detalhes">
-                    <i class="fa-solid fa-eye"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Vence Hoje -->
-            <tr class="row-status hoje">
-              <td><span class="valor-hoje">16/05/2023</span></td>
-              <td>Água e Esgoto</td>
-              <td>Fatura Maio/2023</td>
-              <td><span class="badge badge-category">Água</span></td>
-              <td class="text-right"><strong class="valor-hoje">R$ 320,00</strong></td>
-              <td><span class="badge badge-hoje"><i class="fa-solid fa-exclamation"></i> Vence Hoje</span></td>
-              <td class="text-center">
-                <div class="action-buttons">
-                  <button class="btn btn-success btn-icon" title="Registrar Pagamento">
-                    <i class="fa-solid fa-money-bill"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Editar">
-                    <i class="fa-solid fa-pencil"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Detalhes">
-                    <i class="fa-solid fa-eye"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Pendente -->
-            <tr class="row-status pendente">
-              <td>20/05/2023</td>
-              <td>Internet</td>
-              <td>Fatura Maio/2023</td>
-              <td><span class="badge badge-category">Internet</span></td>
-              <td class="text-right"><strong>R$ 220,00</strong></td>
-              <td><span class="badge badge-pendente"><i class="fa-solid fa-clock"></i> Pendente</span></td>
-              <td class="text-center">
-                <div class="action-buttons">
-                  <button class="btn btn-success btn-icon" title="Registrar Pagamento">
-                    <i class="fa-solid fa-money-bill"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Editar">
-                    <i class="fa-solid fa-pencil"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Detalhes">
-                    <i class="fa-solid fa-eye"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Agendado -->
-            <tr class="row-status agendado">
-              <td>25/05/2023</td>
-              <td>Folha de Pagamento</td>
-              <td>Salários Maio/2023</td>
-              <td><span class="badge badge-category">Folha</span></td>
-              <td class="text-right"><strong>R$ 5.800,00</strong></td>
-              <td><span class="badge badge-agendado"><i class="fa-solid fa-calendar-check"></i> Agendado</span></td>
-              <td class="text-center">
-                <div class="action-buttons">
-                  <button class="btn btn-outline btn-icon" title="Editar">
-                    <i class="fa-solid fa-pencil"></i>
-                  </button>
-                  <button class="btn btn-outline btn-icon" title="Detalhes">
-                    <i class="fa-solid fa-eye"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- Pago -->
-            <tr class="row-status pago">
-              <td>01/05/2023</td>
-              <td>Telefone</td>
-              <td>Fatura Abril/2023</td>
-              <td><span class="badge badge-category">Telefone</span></td>
-              <td class="text-right"><strong>R$ 180,00</strong></td>
-              <td><span class="badge badge-pago"><i class="fa-solid fa-check"></i> Pago</span></td>
-              <td class="text-center">
-                <div class="action-buttons">
-                  <button class="btn btn-outline btn-icon" title="Ver Comprovante">
-                    <i class="fa-solid fa-receipt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+            {% endfor %}
+ 
           </tbody>
         </table>
       </div>
     </div>
 
     <!-- Pagination -->
-    <div class="pagination">
-      <div class="pagination-info">
-        Mostrando 1-6 de 15 registros
-      </div>
-      <div class="pagination-controls">
-        <button class="pagination-btn disabled">Anterior</button>
-        <button class="pagination-btn active">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
-        <button class="pagination-btn">Próxima</button>
-      </div>
-    </div>
+    {% include "core/partials/_paginacao.html" %}
   </div>
 </div>
 
@@ -1117,8 +1006,9 @@
 
         <div class="form-group">
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="anexarComprovante">
-            <label class="form-check-label" for="anexarComprovante">Anexar comprovante</label>
+            <label class="checkbox-option" for="anexarComprovante">
+            <input type="checkbox" id="anexarComprovante">
+            Anexar comprovante</label>
           </div>
         </div>
 
@@ -1179,21 +1069,26 @@
             </button>
           </div>
         </div>
+        <div class="form-grid">
         <div class="form-group">
-          <label class="form-label">Descrição *</label>
-          <input type="text" class="form-control" required>
+          <label  class="form-label">Descrição *</label>
+          <input id='despDescricao' type="text" class="form-control" required>
         </div>
-
+        <div class="form-group">
+          <label  class="form-label">Documento *</label>
+          <input id='despDocumento' type="text" class="form-control" required>
+        </div>
+ </div>
         <!-- DATAS / COMPETÊNCIA -->
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Data de Vencimento *</label>
-            <input type="date" class="form-control" required>
+            <input id='despVencimento' type="date" class="form-control" required>
           </div>
 
           <div class="form-group">
             <label class="form-label">Competência *</label>
-            <input type="month" class="form-control" required>
+            <input id='despCompetencia' type="month" class="form-control" required>
           </div>
         </div>
 
@@ -1206,44 +1101,24 @@
               <input type="text" id="valor_total" class="form-control" placeholder="0,00">
             </div>
           </div>
-
-
           <div class="form-group">
-            <label class="form-label">Parcelas</label>
-            <input type="number" id="parcelas" class="form-control" min="1" value="1">
+            <label class="form-label">Status *</label>
+            <select id='status_despesa' class="form-select" required>
+              <option value="pendente">Pendente</option>
+              <option value="agendado">Agendado</option>
+               
+            </select>
           </div>
-        </div>
-      <div class="form-group">
-        <small class="text-muted" id="previewParcelas">
-           
-        </small>
+
+ 
       </div>
         <!-- STATUS / PAGAMENTO -->
         <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Status *</label>
-            <select class="form-select" required>
-              <option value="pendente">Pendente</option>
-              <option value="agendado">Agendado</option>
-              <option value="pago">Pago</option>
-            </select>
-          </div>
 
-          <div class="form-group">
-            <label class="form-label">Forma de Pagamento *</label>
-            <select class="form-select" required>
-              <option value="">Selecione</option>
-              <option value="boleto">Boleto</option>
-              <option value="pix">PIX</option>
-              <option value="dinheiro">Dinheiro</option>
-              <option value="debito">Cartão Débito</option>
-              <option value="credito">Cartão Crédito</option>
-            </select>
-          </div>
-
+ 
           <div class="form-group">
             <label class="form-label">Conta de Débito (Prevista)</label>
-            <select class="form-select">
+            <select id='conta_debito'class="form-select">
               <option value="">Selecione a conta</option>
               {% for conta in contas_bancarias %}
                 <option value="{{ conta.id }}">{{ conta.conta_bancaria_extenso }}</option>
@@ -1258,39 +1133,74 @@
         <!-- OBS -->
         <div class="form-group">
           <label class="form-label">Observações</label>
-          <textarea class="form-control" rows="3"></textarea>
+          <textarea id='observacoes_despesa' class="form-control" rows="3"></textarea>
         </div>
 
         <!-- RECORRÊNCIA -->
         <div class="form-group">
           <div class="form-check">
+            <label class="checkbox-option" for="despesaRecorrente">
             <input type="checkbox" class="form-check-input" id="despesaRecorrente">
-            <label class="form-check-label" for="despesaRecorrente">Despesa Recorrente</label>
+            Despesa Recorrente</label>
           </div>
         </div>
 
-        <div class="form-grid" id="recorrenciaFields" style="display:none;">
-          <div class="form-group">
-            <label class="form-label">Frequência</label>
-            <select class="form-select">
-              <option value="mensal">Mensal</option>
-              <option value="bimestral">Bimestral</option>
-              <option value="trimestral">Trimestral</option>
-              <option value="semestral">Semestral</option>
-              <option value="anual">Anual</option>
-            </select>
+      <!-- RECORRÊNCIA (TODAS AS FREQUÊNCIAS) -->
+      <div id="recorrenciaContainer">
+          <!-- Opção: Por quantidade de meses ou por data de término -->
+          <div class="form-group" id="tipoRecorrenciaSelector" style="display:none;">
+              <label class="form-label">Tipo de Recorrência</label>
+              <select class="form-select" id="tipoRecorrencia">
+                  <option value="meses">Por quantidade de ocorrências</option>
+                  <option value="data">Por data de término</option>
+              </select>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Início</label>
-            <input type="date" class="form-control">
+          <!-- Campos para quantidade de meses/ocorrências -->
+          <div class="form-grid" id="recorrenciaMesesFields" style="display:none;">
+              <div class="form-group">
+                  <label class="form-label">Data de Início *</label>
+                  <input type="date" class="form-control" id="inicio_recorrencia_meses">
+              </div>
+              <div class="form-group">
+                  <label class="form-label">Quantidade de Ocorrências *</label>
+                  <input type="number" class="form-control" id="qtd_meses" min="1" value="12">
+              </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Término</label>
-            <input type="date" class="form-control">
+          <!-- Campos para data de término -->
+          <div class="form-grid" id="recorrenciaDataFields" style="display:none;">
+              <div class="form-group">
+                  <label class="form-label">Data de Início *</label>
+                  <input type="date" class="form-control" id="inicio_recorrencia_data">
+              </div>
+              <div class="form-group">
+                  <label class="form-label">Data de Término *</label>
+                  <input type="date" class="form-control" id="termino_recorrencia">
+              </div>
           </div>
-        </div>
+
+          <!-- Frequência (todas as opções) -->
+          <div class="form-group" id="frequenciaField" style="display:none;">
+              <label class="form-label">Frequência</label>
+              <select class="form-select" id="frequencia_recorrencia">
+                  <option value="semanal">Semanal</option>
+                  <option value="quinzenal">Quinzenal</option>
+                  <option value="mensal" selected>Mensal</option>
+                  <option value="bimestral">Bimestral</option>
+                  <option value="trimestral">Trimestral</option>
+                  <option value="semestral">Semestral</option>
+                  <option value="anual">Anual</option>
+              </select>
+          </div>
+
+          <!-- Preview da recorrência -->
+          <div class="form-group" id="previewRecorrencia" style="display:none;">
+              <div style="background: var(--cinza-claro); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--roxoPrincipal);">
+                  <small class="text-muted" id="previewTexto" style="color: var(--preto); line-height: 1.6; display: block;"></small>
+              </div>
+          </div>
+      </div>
 
         <!-- ANEXO -->
         <div class="form-group">
@@ -1309,9 +1219,6 @@
   </div>
 </div>
 
-
-<!-- Modal de Fornecedor -->
-<!-- Modal de Fornecedor -->
 <div class="modal-overlay" id="modalFornecedor">
   <div class="modal-container" style="max-width: 600px;">
     <div class="modal-header">
@@ -1376,7 +1283,6 @@
 </div>
 
  
-<!-- Include do modal de plano de contas (já existente) -->
 {% include "core/partials/_modal_plano_contas.html" %}
 
 {% include "core/partials/alertas.html" %}
@@ -1385,419 +1291,7 @@
 {% block scripts %}
 <script src="{% static 'core/js/base/MaskAndInputsBase.js' %}"></script>
 <script src="{% static 'core/js/configuracoes/configBase.js' %}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    console.log('[ContasPagar] Inicializando...');
-
-    // ========================================
-    // 1. FUNCIONALIDADE DO MODAL DE FORNECEDOR
-    // ========================================
-(function () {
-  console.log('[ModalFornecedor] Configurando...');
-
-  // Elementos
-  const modal = document.getElementById('modalFornecedor');
-  const btnOpen = document.getElementById('btnAbrirModalFornecedor');
-  const btnClose = document.getElementById('fecharModalFornecedor');
-  const btnConfirmar = document.getElementById('confirmarFornecedor');
-  const btnLimpar = document.getElementById('limparFornecedor');
-  const busca = document.getElementById('buscaFornecedor');
-  const lista = document.getElementById('listaFornecedores');
-  const fornecedorId = document.getElementById('fornecedor_id');
-  const fornecedorDisplay = document.getElementById('fornecedor_display');
-
-  // Verificar se elementos existem
-  if (!modal || !btnOpen) {
-    console.error('[ModalFornecedor] Elementos não encontrados!');
-    return;
-  }
-
-  let fornecedorSelecionado = null;
-
-  // Função para abrir o modal
-  function abrirModal() {
-    console.log('[ModalFornecedor] Abrindo modal...');
-    modal.classList.add('active');
-    
-    // Focar no campo de busca
-    if (busca) {
-      busca.value = '';
-      busca.focus();
-      filtrarFornecedores('');
-    }
-    
-    // Habilitar/desabilitar botão confirmar
-    if (btnConfirmar) {
-      btnConfirmar.disabled = !fornecedorSelecionado;
-    }
-    
-    // Marcar item selecionado
-    marcarItemSelecionado();
-  }
-
-  // Função para fechar o modal
-  function fecharModal() {
-    console.log('[ModalFornecedor] Fechando modal...');
-    modal.classList.remove('active');
-  }
-
-  // Filtrar fornecedores
-  function filtrarFornecedores(termo) {
-    if (!lista) return;
-    
-    const itens = lista.querySelectorAll('.modal-item');
-    termo = termo.toLowerCase().trim();
-    
-    itens.forEach(item => {
-      const texto = item.textContent.toLowerCase();
-      if (texto.includes(termo)) {
-        item.style.display = '';
-      } else {
-        item.style.display = 'none';
-      }
-    });
-  }
-
-  // Marcar item selecionado
-  function marcarItemSelecionado() {
-    if (!lista || !fornecedorSelecionado) return;
-    
-    const itens = lista.querySelectorAll('.modal-item');
-    itens.forEach(item => {
-      item.classList.remove('selected');
-      if (item.dataset.id === fornecedorSelecionado.id) {
-        item.classList.add('selected');
-      }
-    });
-  }
-
-  // Event Listeners
-  btnOpen.addEventListener('click', (e) => {
-    e.preventDefault();
-    abrirModal();
-  });
-
-  if (btnClose) {
-    btnClose.addEventListener('click', fecharModal);
-  }
-
-  // Fechar ao clicar fora
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      fecharModal();
-    }
-  });
-
-  // Fechar com ESC
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
-      fecharModal();
-    }
-  });
-
-  // Filtro de busca
-  if (busca) {
-    busca.addEventListener('input', function(e) {
-      filtrarFornecedores(e.target.value);
-    });
-  }
-
-  // Selecionar fornecedor
-  if (lista) {
-    lista.addEventListener('click', function(e) {
-      const item = e.target.closest('.modal-item');
-      if (!item) return;
-      
-      // Remover seleção anterior
-      lista.querySelectorAll('.modal-item').forEach(i => {
-        i.classList.remove('selected');
-      });
-      
-      // Selecionar novo
-      item.classList.add('selected');
-      fornecedorSelecionado = {
-        id: item.dataset.id,
-        nome: item.dataset.nome,
-        centroCustoId: item.dataset.centroCustoId,
-        centroCustoCodigo: item.dataset.centroCustoCodigo,
-        centroCustoDescricao: item.dataset.centroCustoDescricao
-      };
-      
-      // Habilitar botão confirmar
-      if (btnConfirmar) {
-        btnConfirmar.disabled = false;
-      }
-    });
-  }
-
-  // Botão confirmar
-// Botão confirmar
-  if (btnConfirmar) {
-    btnConfirmar.addEventListener('click', function () {
-      if (!fornecedorSelecionado) return;
-
-      // Preencher fornecedor
-      fornecedorId.value = fornecedorSelecionado.id;
-      fornecedorDisplay.value = fornecedorSelecionado.nome;
-
-      // 🔥 PREENCHER PLANO DE CONTAS AUTOMATICAMENTE
-      const contaCodigoInput = document.querySelector('.conta-codigo');
-      const contaDescInput   = document.querySelector('.conta-desc');
-
-      if (
-        fornecedorSelecionado.centroCustoCodigo &&
-        fornecedorSelecionado.centroCustoDescricao &&
-        contaCodigoInput &&
-        contaDescInput
-      ) {
-        contaCodigoInput.value = fornecedorSelecionado.centroCustoCodigo;
-        contaDescInput.value =
-          `${fornecedorSelecionado.centroCustoCodigo} - ${fornecedorSelecionado.centroCustoDescricao}`;
-
-        console.log('[ModalFornecedor] Plano de contas preenchido automaticamente');
-      } else {
-        // Se fornecedor não tiver plano
-        if (contaCodigoInput) contaCodigoInput.value = '';
-        if (contaDescInput) contaDescInput.value = '';
-        console.log('[ModalFornecedor] Fornecedor sem plano de contas');
-      }
-
-      fecharModal();
-    });
-  }
-
-
-  // Botão limpar
-  if (btnLimpar) {
-    btnLimpar.addEventListener('click', function() {
-      fornecedorSelecionado = null;
-      
-      // Limpar seleção visual
-      if (lista) {
-        lista.querySelectorAll('.modal-item').forEach(i => {
-          i.classList.remove('selected');
-        });
-      }
-      
-      // Limpar campos do fornecedor
-      if (fornecedorId) fornecedorId.value = '';
-      if (fornecedorDisplay) fornecedorDisplay.value = '';
-      
-      // Limpar campos do centro de custo também
-      const centroCustoId = document.getElementById('centro_custo_id');
-      const centroCustoCodigo = document.getElementById('centro_custo_codigo');
-      const centroCustoDisplay = document.getElementById('centro_custo_display');
-      
-      if (centroCustoId) centroCustoId.value = '';
-      if (centroCustoCodigo) centroCustoCodigo.value = '';
-      if (centroCustoDisplay) centroCustoDisplay.value = '';
-      
-      // Desabilitar botão confirmar
-      if (btnConfirmar) btnConfirmar.disabled = true;
-    });
-  }
-
-  console.log('[ModalFornecedor] Configuração concluída!');
-})();
-   
-
-    // ========================================
-    // 3. FUNCIONALIDADES GERAIS DA PÁGINA
-    // ========================================
-    
-    // Bulk selection functionality
-    const selectAll = document.getElementById('selectAll');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-    const bulkActions = document.getElementById('bulkActions');
-    const selectedCount = document.getElementById('selectedCount');
-
-    function updateBulkActions() {
-      const selected = document.querySelectorAll('.row-checkbox:checked').length;
-      if (selectedCount) selectedCount.textContent = selected;
-
-      if (selected > 0 && bulkActions) {
-        bulkActions.classList.add('active');
-      } else if (bulkActions) {
-        bulkActions.classList.remove('active');
-      }
-    }
-
-    if (selectAll) {
-      selectAll.addEventListener('change', function () {
-        const isChecked = this.checked;
-        rowCheckboxes.forEach(checkbox => {
-          if (!checkbox.disabled) {
-            checkbox.checked = isChecked;
-          }
-        });
-        updateBulkActions();
-      });
-    }
-
-    rowCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', updateBulkActions);
-    });
-
-    // Bulk action buttons
-    document.getElementById('btnBulkPay')?.addEventListener('click', function () {
-      const selected = Array.from(document.querySelectorAll('.row-checkbox:checked'))
-        .map(cb => cb.closest('tr').querySelector('td:nth-child(3)').textContent);
-      alert(`Marcar como pago: ${selected.join(', ')}`);
-    });
-
-    document.getElementById('btnBulkDeselect')?.addEventListener('click', function () {
-      rowCheckboxes.forEach(cb => cb.checked = false);
-      if (selectAll) selectAll.checked = false;
-      updateBulkActions();
-    });
-
-    // Filter functionality
-    document.getElementById('btnFiltrar')?.addEventListener('click', function () {
-      console.log('Aplicando filtros...');
-    });
-
-    document.getElementById('btnLimparFiltros')?.addEventListener('click', function () {
-      document.querySelectorAll('.filter-select, .filter-input').forEach(el => {
-        if (el.tagName === 'SELECT') {
-          el.selectedIndex = 0;
-        } else {
-          el.value = '';
-        }
-      });
-    });
-
-    // Enhanced modal functionality
-    const modals = {
-      pagamento: document.getElementById('modalPagamento'),
-      novaDespesa: document.getElementById('modalNovaDespesa'),
-      fornecedor: document.getElementById('modalFornecedor'),
-      centroCusto: document.getElementById('modalCentroCusto')
-    };
-
-    // Open modals
-    document.querySelectorAll('.btn-success.btn-icon').forEach(btn => {
-      btn.addEventListener('click', () => modals.pagamento.classList.add('active'));
-    });
-
-    document.getElementById('openModalNovaDespesa')?.addEventListener('click',
-      () => modals.novaDespesa.classList.add('active'));
-
-    // Close modals
-    document.getElementById('closePaymentModal')?.addEventListener('click',
-      () => modals.pagamento.classList.remove('active'));
-    document.getElementById('cancelPaymentModal')?.addEventListener('click',
-      () => modals.pagamento.classList.remove('active'));
-
-    document.getElementById('closeNovaDespesa')?.addEventListener('click',
-      () => modals.novaDespesa.classList.remove('active'));
-    document.getElementById('cancelNovaDespesa')?.addEventListener('click',
-      () => modals.novaDespesa.classList.remove('active'));
-
-    // Close modals on outside click
-    Object.values(modals).forEach(modal => {
-      modal?.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      });
-    });
-
-    // Dynamic form fields
-    const anexarComprovante = document.getElementById('anexarComprovante');
-    const comprovanteField = document.getElementById('comprovanteField');
-    if (anexarComprovante && comprovanteField) {
-      anexarComprovante.addEventListener('change', () => {
-        comprovanteField.style.display = anexarComprovante.checked ? 'block' : 'none';
-      });
-    }
-
-    const despesaRecorrente = document.getElementById('despesaRecorrente');
-    const recorrenciaFields = document.getElementById('recorrenciaFields');
-    if (despesaRecorrente && recorrenciaFields) {
-      despesaRecorrente.addEventListener('change', () => {
-        recorrenciaFields.style.display = despesaRecorrente.checked ? 'grid' : 'none';
-      });
-    }
-
-    // Export functionality
-    document.getElementById('btnExport')?.addEventListener('click', function () {
-      alert('Exportando dados...');
-    });
-
-    // Print functionality
-    document.getElementById('btnPrint')?.addEventListener('click', function () {
-      window.print();
-    });
-
-    // Dropdown functionality
-    document.addEventListener('click', function (e) {
-      const toggle = e.target.closest('.dropdown-toggle');
-      const openMenus = document.querySelectorAll('.dropdown-menu.show');
-
-      if (toggle) {
-        e.preventDefault();
-        const menu = toggle.parentElement.querySelector('.dropdown-menu');
-        if (menu) menu.classList.toggle('show');
-
-        // Close other menus
-        openMenus.forEach(m => {
-          if (m !== menu) m.classList.remove('show');
-        });
-      } else {
-        openMenus.forEach(m => m.classList.remove('show'));
-      }
-    });
-
-    console.log('[ContasPagar] Configuração concluída!');
-  });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-  const valorInput = document.getElementById('valor_total');
-  const parcelasInput = document.getElementById('parcelas');
-  const preview = document.getElementById('previewParcelas');
-
-  function parseValor(valor) {
-    if (!valor) return 0;
-    return parseFloat(
-      valor.replace(/\./g, '').replace(',', '.')
-    ) || 0;
-  }
-
-  function formatar(valor) {
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-  }
-
-  function atualizarPreview() {
-    const valorTotal = parseValor(valorInput.value);
-    let parcelas = parseInt(parcelasInput.value) || 1;
-
-    if (parcelas < 1) parcelas = 1;
-    parcelasInput.value = parcelas;
-
-    if (valorTotal <= 0) {
-      preview.innerText = `Será gerada ${parcelas} parcela(s)`;
-      return;
-    }
-
-    const valorBase = Math.floor((valorTotal / parcelas) * 100) / 100;
-    const resto = valorTotal - (valorBase * parcelas);
-    const ultimaParcela = valorBase + resto;
-
-    if (parcelas === 1) {
-      preview.innerText = `Será gerada 1 parcela de ${formatar(valorTotal)}`;
-    } else {
-      preview.innerText =
-        `${parcelas} parcelas de ${formatar(valorBase)} ` +
-        `(${parcelas - 1}x) e 1 parcela de ${formatar(ultimaParcela)}`;
-    }
-  }
-
-  valorInput.addEventListener('input', atualizarPreview);
-  parcelasInput.addEventListener('input', atualizarPreview);
-});
-</script>
+<script src="{% static 'core/js/financeiro/contas_pagar.js' %}"></script>
+<script scr='{% static "core/js/base/partials/_modal_plano_contas.js" %}'></script>
 
 {% endblock %}
